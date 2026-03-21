@@ -248,6 +248,18 @@ input, button, select, textarea {
             </div>
             <button type="submit" id="btnLogin" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm hover-scale">MASUK DASHBOARD</button>
           </form>
+          <div class="row g-2 mt-3">
+                <div class="col-6">
+                    <a id="btn-dl-win" href="#" target="_blank" class="btn btn-outline-secondary w-100 py-2 small fw-bold d-none" style="font-size: 12px; border-radius: 10px;">
+                        <i class="fab fa-windows text-info"></i> App Windows
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a id="btn-dl-and" href="#" target="_blank" class="btn btn-outline-success w-100 py-2 small fw-bold d-none" style="font-size: 12px; border-radius: 10px;">
+                        <i class="fab fa-android text-success"></i> App Android
+                    </a>
+                </div>
+            </div>
 
 <footer class="mt-4 small container">
   <div class="text-center text-muted mb-2">
@@ -471,7 +483,10 @@ input, button, select, textarea {
                            <div class="mb-2"><label for="cfgFolder" class="small fw-bold">ID Folder Drive (Penyimpanan Foto)</label><input type="text" id="cfgFolder" class="form-control" placeholder="Kosongkan jika auto-create"></div>
                            
                            <div class="mb-2"><label for="cfgRun" class="small fw-bold">Running Text</label><textarea id="cfgRun" class="form-control" rows="2"></textarea></div>
-                           <div class="mb-2"><label for="cfgFoot" class="small fw-bold">Teks Footer</label><input type="text" id="cfgFoot" class="form-control"></div>
+                           <div class="row">
+                         <div class="col-6 mb-2"><label for="cfgUrlWin" class="small fw-bold text-info"><i class="fab fa-windows"></i> Link App Windows</label><input type="text" id="cfgUrlWin" class="form-control" placeholder="https://..."></div>
+                      <div class="col-6 mb-2"><label for="cfgUrlAnd" class="small fw-bold text-success"><i class="fab fa-android"></i> Link App Android</label><input type="text" id="cfgUrlAnd" class="form-control" placeholder="https://..."></div>
+                        </div>
                            <div class="row">
                               <div class="col-6"><label for="cfgDenda" class="small fw-bold">Denda (Rp)</label><input type="number" id="cfgDenda" class="form-control"></div>
                               <div class="col-6"><label for="cfgDurasi" class="small fw-bold">Durasi (Hari)</label><input type="number" id="cfgDurasi" class="form-control"></div>
@@ -1076,17 +1091,14 @@ function loadAppConfig() {
         const bgSrc = cfg.UrlBackground;
 
         if(logoSrc) {
-            globalLogoUrl = logoSrc; // KUNCI PERBAIKAN 1: Simpan ke memori global
-            
+            globalLogoUrl = logoSrc; 
             const l1 = document.getElementById('login-logo');
             const l2 = document.getElementById('sidebar-logo');
             const l3 = document.getElementById('login-logo-center');
-            
             const fallback = 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
             if(l1) { l1.src = logoSrc; l1.onerror = () => l1.src = fallback; }
             if(l2) { l2.src = logoSrc; l2.onerror = () => l2.src = fallback; }
             if(l3) { l3.src = logoSrc; l3.onerror = () => l3.src = fallback; }
-            
             const pLogo = document.getElementById('previewLogo');
             if(pLogo && logoSrc.length > 5) { pLogo.src = logoSrc; pLogo.style.display = 'block'; }
         }
@@ -1099,11 +1111,24 @@ function loadAppConfig() {
             document.title = cfg.NamaSekolah + ' - Library';
         }
         
-        if(cfg.FooterText) {
-            const f1 = document.getElementById('login-footer-text');
-            const f2 = document.getElementById('sidebar-footer-text');
-            if(f1) f1.innerHTML = cfg.FooterText;
-            if(f2) f2.innerHTML = cfg.FooterText;
+        // --- FITUR BARU: FOOTER OTOMATIS BERDASARKAN NAMA SEKOLAH ---
+        const namaSekolahFooter = cfg.NamaSekolah || 'Perpustakaan Sekolah';
+        const footerTeksOtomatis = `© 2026 SiE-MPuS (${namaSekolahFooter}). Hak cipta dilindungi.`;
+        const f1 = document.getElementById('login-footer-text');
+        const f2 = document.getElementById('sidebar-footer-text');
+        if(f1) f1.innerHTML = footerTeksOtomatis;
+        if(f2) f2.innerHTML = footerTeksOtomatis;
+        
+        // --- FITUR BARU: MENAMPILKAN TOMBOL DOWNLOAD JIKA URL ADA ---
+        const btnWin = document.getElementById('btn-dl-win');
+        const btnAnd = document.getElementById('btn-dl-and');
+        if(btnWin && cfg.UrlWindows && cfg.UrlWindows.length > 5) {
+            btnWin.href = cfg.UrlWindows;
+            btnWin.classList.remove('d-none'); // Munculkan tombol Windows
+        }
+        if(btnAnd && cfg.UrlAndroid && cfg.UrlAndroid.length > 5) {
+            btnAnd.href = cfg.UrlAndroid;
+            btnAnd.classList.remove('d-none'); // Munculkan tombol Android
         }
         
         if(cfg.RunningText) {
@@ -1114,7 +1139,6 @@ function loadAppConfig() {
         if(bgSrc) {
             const la = document.getElementById('login-app');
             if(la) la.style.backgroundImage = `url('${bgSrc}')`;
-            
             const pBg = document.getElementById('previewBg');
             if(pBg && bgSrc.length > 5) { pBg.src = bgSrc; pBg.style.display = 'block'; }
         }
@@ -1603,7 +1627,10 @@ function loadSettingsForm() {
             document.getElementById('cfgLogo').value = cfg.UrlLogo || '';
             document.getElementById('cfgBg').value = cfg.UrlBackground || ''; 
             document.getElementById('cfgRun').value = cfg.RunningText || '';
-            document.getElementById('cfgFoot').value = cfg.FooterText || '';
+            // (cfgFoot Dihapus, diganti url Android & Windows)
+            document.getElementById('cfgUrlWin').value = cfg.UrlWindows || '';
+            document.getElementById('cfgUrlAnd').value = cfg.UrlAndroid || '';
+            
             document.getElementById('cfgDenda').value = cfg.DendaPerHari || 500;
             document.getElementById('cfgDurasi').value = cfg.DurasiPinjam || 7;
             document.getElementById('cfgHp').value = cfg.NoHP || '';
@@ -1623,7 +1650,10 @@ function saveSettings() {
         uploadLogo: uploadLogoBase64, 
         uploadBg: uploadBgBase64,     
         runningText: document.getElementById('cfgRun').value, 
-        footerText: document.getElementById('cfgFoot').value, 
+        // Mengirim URL aplikasi ke Database (Bukan teks footer lagi)
+        urlWin: document.getElementById('cfgUrlWin').value, 
+        urlAnd: document.getElementById('cfgUrlAnd').value, 
+        
         denda: document.getElementById('cfgDenda').value, 
         durasi: document.getElementById('cfgDurasi').value, 
         nohp: document.getElementById('cfgHp').value, 
@@ -1632,7 +1662,6 @@ function saveSettings() {
         idFolder: document.getElementById('cfgFolder').value
     };
     
-    // Terapkan Smart Loading
     let desc = 'Sedang memperbarui aturan dan identitas...';
     if(uploadBgBase64 || uploadLogoBase64) desc = 'Sedang mengunggah file foto ke Google Drive...';
     showSmartLoading('Menyimpan Pengaturan...', desc);
