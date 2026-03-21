@@ -1914,6 +1914,7 @@ function printAllLabels() {
 
 // ==========================================================
 // 2. FITUR CETAK SEMUA KARTU ANGGOTA (A4 2x5 = 10 Kartu)
+// STANDAR ID CARD: 8.5 cm x 5.5 cm
 // ==========================================================
 function printAllCards() {
     showSmartLoading('Menyiapkan Kartu...', 'Mengambil data anggota dan menyusun layout kertas A4.');
@@ -1966,7 +1967,7 @@ function printAllCards() {
             htmlContent += `</div>`;
             tempDiv.innerHTML = htmlContent;
 
-            // Generate QR Code (Diperbesar jadi 85x85)
+            // Generate QR Code (Ukuran 85x85)
             allMembers.forEach((m, index) => {
                 new QRCode(document.getElementById(`qr-batch-mem-${index}`), { text: m[0], width: 85, height: 85 });
             });
@@ -1984,7 +1985,8 @@ function printAllCards() {
                 const printWindow = window.open('', '', 'height=800,width=1000');
                 const css = `
                     <style>
-                        @page { size: A4 portrait; margin: 10mm; }
+                        @page { size: A4 portrait; margin: 5mm; } /* Margin dikecilkan agar muat 5 baris */
+                        
                         /* Kode sakti agar warna tercetak di PDF */
                         body { 
                             font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #fff; 
@@ -1992,26 +1994,34 @@ function printAllCards() {
                             print-color-adjust: exact !important; 
                         }
                         
-                        /* Layout 2 Kolom x 5 Baris */
+                        /* Layout Grid dengan ukuran fix dalam centimeter */
                         .print-page {
-                            display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(5, 1fr);
-                            width: 190mm; height: 277mm; box-sizing: border-box;
+                            display: grid; 
+                            grid-template-columns: 8.5cm 8.5cm; /* 2 Kolom lebar 8.5 cm */
+                            grid-template-rows: repeat(5, 5.5cm); /* 5 Baris tinggi 5.5 cm */
+                            column-gap: 10mm; /* Jarak antar kolom menyamping */
+                            row-gap: 3mm; /* Jarak antar baris ke bawah dibuat sangat mepet */
+                            justify-content: center; /* Posisikan di tengah kertas */
+                            align-content: start;
+                            width: 100%; height: 287mm; box-sizing: border-box;
+                            padding-top: 5mm;
                         }
                         
                         .card-wrapper { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
 
-                        /* Kartu disesuaikan tingginya (180px) agar muat 5 baris di kertas A4 */
+                        /* Kartu mengikuti ukuran grid induknya (8.5 x 5.5 cm) */
                         .id-card {
-                            width: 320px; height: 185px; background: #f8f9fa; border: 2px solid #ddd;
+                            width: 100%; height: 100%; background: #f8f9fa; border: 2px solid #ddd;
                             border-radius: 12px; overflow: hidden; position: relative; box-sizing: border-box;
                         }
-                        .card-header { background: #4361ee; height: 45px; display: flex; align-items: center; padding: 0 15px; color: white; }
-                        .card-header img { height: 32px; width: 32px; background: #fff; border-radius: 50%; padding: 2px; margin-right: 10px; object-fit: contain; }
+                        .card-header { background: #4361ee; height: 1.2cm; display: flex; align-items: center; padding: 0 15px; color: white; }
+                        .card-header img { height: 0.9cm; width: 0.9cm; background: #fff; border-radius: 50%; padding: 2px; margin-right: 10px; object-fit: contain; }
                         .card-header div { font-weight: bold; font-size: 13px; }
-                        .card-body { padding: 12px 15px; display: flex; justify-content: space-between; }
-                        .card-info h3 { margin: 0 0 5px; font-size: 15px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; }
-                        .card-info p { font-size: 11px; color: #666; margin: 2px 0; }
-                        .card-footer { position: absolute; bottom: 6px; width: 100%; text-align: center; font-size: 10px; font-weight: bold; color: #4361ee; }
+                        .card-body { padding: 8px 15px; display: flex; justify-content: space-between; align-items: flex-start; }
+                        .card-info h3 { margin: 0 0 4px; font-size: 14px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 4.5cm; }
+                        .card-info p { font-size: 11px; color: #666; margin: 1px 0; }
+                        .card-footer { position: absolute; bottom: 5px; width: 100%; text-align: center; font-size: 10px; font-weight: bold; color: #4361ee; }
+                        .qr-container { margin-top: -3px; }
                     </style>
                 `;
 
@@ -2025,8 +2035,6 @@ function printAllCards() {
 
         }).getAllDataForExport('anggota');
 }
-
-</script>
 
   </body>
 </html>
