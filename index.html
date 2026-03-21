@@ -1822,41 +1822,37 @@ loadAppConfig = function() {
     }).getAppConfig();
 };
 
-// --- FITUR CETAK SEMUA BARCODE BUKU (A4 3x3) ---
+// ==========================================================
+// 1. FITUR CETAK SEMUA BARCODE BUKU (A4 3x3 + LOGO & QR BESAR)
+// ==========================================================
 function printAllLabels() {
-    // 1. Tampilkan loading agar pengguna tahu sistem sedang memproses
     showSmartLoading('Menyiapkan Barcode...', 'Mengambil semua data buku dan menyusun layout kertas A4.');
 
-    // 2. Panggil fungsi di GAS untuk ambil SEMUA data buku
     google.script.run
         .withFailureHandler(handleNetworkError)
         .withSuccessHandler(allBooks => {
-            if (allBooks.length === 0) {
-                Swal.fire('Kosong', 'Belum ada data buku untuk dicetak.', 'info');
-                return;
-            }
+            if (allBooks.length === 0) { Swal.fire('Kosong', 'Belum ada data buku untuk dicetak.', 'info'); return; }
 
-            // 3. Buat wadah sementara yang tersembunyi untuk membuat gambar QR Code
             const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
+            tempDiv.style.position = 'absolute'; tempDiv.style.left = '-9999px';
             document.body.appendChild(tempDiv);
 
+            // Ambil logo sekolah
+            const logo = globalLogoUrl || 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
             let htmlContent = `<div class="print-page">`;
 
-            // 4. Looping semua buku untuk membuat kotak-kotaknya
             allBooks.forEach((b, index) => {
-                const kode = b[0]; // Kolom A: Kode Buku
-                const judul = b[1]; // Kolom B: Judul Buku
+                const kode = b[0]; 
+                const judul = b[1]; 
 
-                // Jika sudah 9 kotak, tutup halaman dan buat halaman baru
+                // Halaman baru setiap 9 kotak
                 if (index > 0 && index % 9 === 0) {
                     htmlContent += `</div><div class="print-page" style="page-break-before: always;">`;
                 }
 
-                // Desain per 1 kotak buku
                 htmlContent += `
                     <div class="label-box">
+                        <img src="${logo}" class="label-logo" crossorigin="anonymous">
                         <div class="label-title">${judul}</div>
                         <div class="label-kode">${kode}</div>
                         <div id="qr-batch-${index}" class="qr-container"></div>
@@ -1866,138 +1862,86 @@ function printAllLabels() {
             htmlContent += `</div>`;
             tempDiv.innerHTML = htmlContent;
 
-            // 5. Generate QR Code ke dalam kotak masing-masing
+            // Generate QR Code (Diperbesar jadi 120x120)
             allBooks.forEach((b, index) => {
-                new QRCode(document.getElementById(`qr-batch-${index}`), {
-                    text: b[0],
-                    width: 90,
-                    height: 90
-                });
+                new QRCode(document.getElementById(`qr-batch-${index}`), { text: b[0], width: 120, height: 120 });
             });
 
-            // 6. Beri waktu 1 detik agar QR Code selesai digambar, lalu cetak
             setTimeout(() => {
-                // Konversi canvas QrCode ke Gambar (agar tidak hilang saat di-print)
                 allBooks.forEach((b, index) => {
                     const qrBox = document.getElementById(`qr-batch-${index}`);
                     if (qrBox) {
                         const canvas = qrBox.querySelector('canvas');
                         const img = qrBox.querySelector('img');
-                        if (canvas && img) {
-                            img.src = canvas.toDataURL("image/png");
-                            img.style.display = "block";
-                            canvas.style.display = "none";
-                        }
+                        if (canvas && img) { img.src = canvas.toDataURL("image/png"); img.style.display = "block"; canvas.style.display = "none"; }
                     }
                 });
 
-                // 7. Buka jendela Print baru dengan CSS khusus A4 3x3
                 const printWindow = window.open('', '', 'height=800,width=1000');
                 const css = `
                     <style>
                         @page { size: A4; margin: 10mm; }
-                        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #fff; }
+                        /* Kode sakti agar warna tercetak di PDF */
+                        body { 
+                            font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #fff; 
+                            -webkit-print-color-adjust: exact !important; 
+                            print-color-adjust: exact !important; 
+                        }
                         .print-page {
-                            display: grid;
-                            grid-template-columns: repeat(3, 1fr);
-                            grid-template-rows: repeat(3, 1fr);
-                            gap: 10px;
-                            width: 190mm;  /* Lebar A4 dikurangi margin */
-                            height: 277mm; /* Tinggi A4 dikurangi margin */
-                            box-sizing: border-box;
+                            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+                            gap: 10px; width: 190mm; height: 277mm; box-sizing: border-box;
                         }
                         .label-box {
-                            border: 2px solid #333;
-                            border-radius: 8px;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                            text-align: center;
-                            padding: 10px;
-                            box-sizing: border-box;
-                            background: #fff;
-                            height: 100%;
+                            border: 2px solid #333; border-radius: 8px; display: flex; flex-direction: column;
+                            align-items: center; justify-content: center; text-align: center; padding: 10px; box-sizing: border-box;
                         }
-                        .label-title {
-                            font-weight: bold;
-                            font-size: 13px;
-                            margin-bottom: 8px;
-                            max-height: 38px;
-                            overflow: hidden;
-                            line-height: 1.2;
-                        }
-                        .label-kode {
-                            background: #000;
-                            color: #fff;
-                            padding: 4px 10px;
-                            border-radius: 4px;
-                            font-size: 14px;
-                            font-weight: bold;
-                            margin-bottom: 12px;
-                            letter-spacing: 1px;
-                        }
+                        .label-logo { width: 35px; height: 35px; object-fit: contain; margin-bottom: 5px; }
+                        .label-title { font-weight: bold; font-size: 13px; margin-bottom: 5px; max-height: 38px; overflow: hidden; line-height: 1.2; }
+                        .label-kode { background: #000; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 14px; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
                         .qr-container img { margin: 0 auto; display: block; }
                     </style>
                 `;
 
-                printWindow.document.write('<html><head><title>Cetak Semua Label Buku</title>' + css + '</head><body>');
-                printWindow.document.write(tempDiv.innerHTML);
-                printWindow.document.write('</body></html>');
+                printWindow.document.write('<html><head><title>Cetak Label Buku</title>' + css + '</head><body>' + tempDiv.innerHTML + '</body></html>');
                 printWindow.document.close();
-
-                // Bersihkan sistem
                 document.body.removeChild(tempDiv);
                 Swal.close();
-
-                // Panggil perintah print
                 setTimeout(() => { printWindow.print(); }, 500);
-
             }, 1000); 
 
-        }).getAllDataForExport('buku'); // Kita memanfaatkan fungsi eksport yang sudah ada di Code.gs!
+        }).getAllDataForExport('buku');
 }
 
-// --- FITUR CETAK SEMUA KARTU ANGGOTA (A4 2x4) ---
+// ==========================================================
+// 2. FITUR CETAK SEMUA KARTU ANGGOTA (A4 2x5 = 10 Kartu)
+// ==========================================================
 function printAllCards() {
-    // 1. Tampilkan Smart Loading
-    showSmartLoading('Menyiapkan Kartu...', 'Mengambil semua data anggota dan menyusun layout kertas A4.');
+    showSmartLoading('Menyiapkan Kartu...', 'Mengambil data anggota dan menyusun layout kertas A4.');
 
-    // 2. Ambil data semua anggota dari server
     google.script.run
         .withFailureHandler(handleNetworkError)
         .withSuccessHandler(allMembers => {
-            if (allMembers.length === 0) {
-                Swal.fire('Kosong', 'Belum ada data anggota untuk dicetak.', 'info');
-                return;
-            }
+            if (allMembers.length === 0) { Swal.fire('Kosong', 'Belum ada data anggota.', 'info'); return; }
 
-            // 3. Buat elemen sementara yang disembunyikan
             const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
+            tempDiv.style.position = 'absolute'; tempDiv.style.left = '-9999px';
             document.body.appendChild(tempDiv);
 
-            // Ambil nama sekolah dan logo dari memori sistem
             const sekolah = document.getElementById('sidebar-school-name').innerText || 'Perpustakaan Sekolah';
             const logo = globalLogoUrl || 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
 
-            let htmlContent = '';
+            let htmlContent = `<div class="print-page">`;
 
-            // 4. Looping untuk membangun struktur kartu
             allMembers.forEach((m, index) => {
-                const id = m[0];
-                const nama = m[1];
+                const id = m[0]; const nama = m[1];
                 const jk = m[3] == 'L' ? 'Laki-laki' : (m[3] == 'P' ? 'Perempuan' : m[3]);
                 const tgl = m[4] ? new Date(m[4]).toLocaleDateString('id-ID') : '-';
 
-                // Buka halaman baru (page) setiap kelipatan 8
-                if (index % 8 === 0) {
-                    if (index > 0) htmlContent += `</div>`; // Tutup grid halaman sebelumnya
-                    htmlContent += `<div class="print-page">`; // Buka grid halaman baru
+                // Halaman baru setiap 10 kartu (2 kolom x 5 baris)
+                if (index > 0 && index % 10 === 0) {
+                    htmlContent += `</div><div class="print-page" style="page-break-before: always;">`;
                 }
 
-                // Desain HTML 1 Kartu (Sama seperti desain cetak perorangan, namun disesuaikan untuk cetak masal)
                 htmlContent += `
                     <div class="card-wrapper">
                         <div class="id-card">
@@ -2018,128 +1962,68 @@ function printAllCards() {
                         </div>
                     </div>
                 `;
-
-                // Tutup div halaman jika ini adalah elemen terakhir
-                if (index === allMembers.length - 1) {
-                    htmlContent += `</div>`;
-                }
             });
-
+            htmlContent += `</div>`;
             tempDiv.innerHTML = htmlContent;
 
-            // 5. Generate QR Code ke masing-masing kartu
+            // Generate QR Code (Diperbesar jadi 85x85)
             allMembers.forEach((m, index) => {
-                new QRCode(document.getElementById(`qr-batch-mem-${index}`), {
-                    text: m[0],
-                    width: 65,
-                    height: 65
-                });
+                new QRCode(document.getElementById(`qr-batch-mem-${index}`), { text: m[0], width: 85, height: 85 });
             });
 
-            // 6. Tunggu sejenak agar QRCode tergambar di Canvas, lalu ubah jadi Gambar (Fix Bug Print Kosong)
             setTimeout(() => {
                 allMembers.forEach((m, index) => {
                     const qrBox = document.getElementById(`qr-batch-mem-${index}`);
                     if (qrBox) {
                         const canvas = qrBox.querySelector('canvas');
                         const img = qrBox.querySelector('img');
-                        if (canvas && img) {
-                            img.src = canvas.toDataURL("image/png");
-                            img.style.display = "block";
-                            canvas.style.display = "none";
-                        }
+                        if (canvas && img) { img.src = canvas.toDataURL("image/png"); img.style.display = "block"; canvas.style.display = "none"; }
                     }
                 });
 
-                // 7. Buka Jendela Print dan atur CSS-nya (Format 2 Menyamping, 4 Ke Bawah)
                 const printWindow = window.open('', '', 'height=800,width=1000');
                 const css = `
                     <style>
                         @page { size: A4 portrait; margin: 10mm; }
-                        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #fff; }
+                        /* Kode sakti agar warna tercetak di PDF */
+                        body { 
+                            font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #fff; 
+                            -webkit-print-color-adjust: exact !important; 
+                            print-color-adjust: exact !important; 
+                        }
                         
-                        /* Setting Kertas A4 dibagi jadi 2x4 kotak */
+                        /* Layout 2 Kolom x 5 Baris */
                         .print-page {
-                            display: grid;
-                            grid-template-columns: repeat(2, 1fr);
-                            grid-template-rows: repeat(4, 1fr);
-                            width: 190mm; /* Lebar area aman A4 */
-                            height: 277mm; /* Tinggi area aman A4 */
-                            page-break-after: always; /* Paksa halaman baru jika grid penuh */
+                            display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(5, 1fr);
+                            width: 190mm; height: 277mm; box-sizing: border-box;
                         }
                         
-                        /* Container agar kartu ada di tengah-tengah kotaknya */
-                        .card-wrapper {
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            width: 100%;
-                            height: 100%;
-                        }
+                        .card-wrapper { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
 
-                        /* Desain Asli Kartu */
+                        /* Kartu disesuaikan tingginya (180px) agar muat 5 baris di kertas A4 */
                         .id-card {
-                            width: 320px;
-                            height: 200px;
-                            background: #f8f9fa;
-                            border: 2px solid #ddd;
-                            border-radius: 12px;
-                            overflow: hidden;
-                            position: relative;
-                            box-sizing: border-box;
+                            width: 320px; height: 185px; background: #f8f9fa; border: 2px solid #ddd;
+                            border-radius: 12px; overflow: hidden; position: relative; box-sizing: border-box;
                         }
-                        .card-header {
-                            background: #4361ee;
-                            height: 50px;
-                            display: flex;
-                            align-items: center;
-                            padding: 0 15px;
-                            color: white;
-                        }
-                        .card-header img {
-                            height: 35px;
-                            width: 35px;
-                            background: #fff;
-                            border-radius: 50%;
-                            padding: 2px;
-                            margin-right: 10px;
-                            object-fit: contain;
-                        }
+                        .card-header { background: #4361ee; height: 45px; display: flex; align-items: center; padding: 0 15px; color: white; }
+                        .card-header img { height: 32px; width: 32px; background: #fff; border-radius: 50%; padding: 2px; margin-right: 10px; object-fit: contain; }
                         .card-header div { font-weight: bold; font-size: 13px; }
-                        .card-body {
-                            padding: 15px;
-                            display: flex;
-                            justify-content: space-between;
-                        }
-                        .card-info h3 { margin: 0 0 5px; font-size: 16px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+                        .card-body { padding: 12px 15px; display: flex; justify-content: space-between; }
+                        .card-info h3 { margin: 0 0 5px; font-size: 15px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; }
                         .card-info p { font-size: 11px; color: #666; margin: 2px 0; }
-                        .card-footer {
-                            position: absolute;
-                            bottom: 8px;
-                            width: 100%;
-                            text-align: center;
-                            font-size: 10px;
-                            font-weight: bold;
-                            color: #4361ee;
-                        }
+                        .card-footer { position: absolute; bottom: 6px; width: 100%; text-align: center; font-size: 10px; font-weight: bold; color: #4361ee; }
                     </style>
                 `;
 
-                printWindow.document.write('<html><head><title>Cetak Semua Kartu Anggota</title>' + css + '</head><body>');
-                printWindow.document.write(tempDiv.innerHTML);
-                printWindow.document.write('</body></html>');
+                printWindow.document.write('<html><head><title>Cetak Semua Kartu Anggota</title>' + css + '</head><body>' + tempDiv.innerHTML + '</body></html>');
                 printWindow.document.close();
-
-                // Bersihkan sistem memori sementara
                 document.body.removeChild(tempDiv);
                 Swal.close();
-
-                // Eksekusi print setelah gambar dan layout beres
                 setTimeout(() => { printWindow.print(); }, 800);
 
-            }, 1200); // Waktu jeda 1,2 detik memastikan QR code terlukis sempurna
+            }, 1200); 
 
-        }).getAllDataForExport('anggota'); // Memanfaatkan fungsi export yang mengambil data tanpa limit/paginasi
+        }).getAllDataForExport('anggota');
 }
 
 </script>
