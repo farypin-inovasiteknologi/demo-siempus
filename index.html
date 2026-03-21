@@ -787,7 +787,8 @@ const myButton = document.getElementById("btn-back-to-top");
 ======================================================== */
 
 // PASTE URL WEB APP GOOGLE SCRIPT-MU DI BAWAH INI:
-const API_URL = "https://script.google.com/a/macros/admin.sma.belajar.id/s/AKfycbyzJi7aVcKzUSie0ZxYQSUA89rJ9q7O7-k27o2tHI_gKaLMOs9t-VoUZHCkARK5lk2D/exec";
+const API_URL = "https://script.google.com/a/macros/admin.sma.belajar.id/s/AKfycbx1uBYrNqg4bYysfFqMwF2ycCgF0b1y6RnRBiTioHzLmLLoiKT3G2r4ild4_gVkSilB/exec";
+
 
 function apiHelper() {
     let successCb = null;
@@ -827,7 +828,8 @@ function apiHelper() {
         updateUserCredentials: function(o, n, p) { execute('updateUserCredentials', {oldUser: o, newUser: n, newPass: p}); },
         processExcelData: function(t, r) { execute('processExcelData', {type: t, rows: r}); },
         getAllDataForExport: function(t) { execute('getAllDataForExport', {type: t}); },
-        getExportHistoryByDate: function(s, e, a) { execute('getExportHistoryByDate', {startDate: s, endDate: e, isArchive: a}); }
+        getExportHistoryByDate: function(s, e, a) { execute('getExportHistoryByDate', {startDate: s, endDate: e, isArchive: a}); },
+        callGeminiAI: function(p) { execute('callGeminiAI', {prompt: p}); } // <--- TAMBAHKAN BARIS INI
     };
 }
 
@@ -1206,19 +1208,43 @@ function loadAppConfig() {
     }).getAppConfig();
 }
 
-// --- FITUR LIHAT PASSWORD ADMIN ---
+// ==========================================================
+// 👁️ FITUR TOMBOL MATA (LIHAT PASSWORD)
+// ==========================================================
+
+// 1. Tombol Mata di Halaman Login
+function togglePassword() {
+    const passInput = document.getElementById('uPass');
+    const icon = document.getElementById('eyeIcon');
+    
+    if (!passInput || !icon) return; // Mencegah error jika elemen tidak ditemukan
+    
+    if (passInput.type === 'password') {
+        passInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+// 2. Tombol Mata di Halaman Pengaturan (Ubah Password Admin)
 function toggleAdminPassword() {
     const passInput = document.getElementById('accPass');
     const icon = document.getElementById('eyeIconAdmin');
     
+    if (!passInput || !icon) return; // Mencegah error jika elemen tidak ditemukan
+    
     if (passInput.type === 'password') {
-        passInput.type = 'text'; // Tampilkan teks
+        passInput.type = 'text';
         icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash'); // Ganti ikon jadi mata dicoret
+        icon.classList.add('fa-eye-slash');
     } else {
-        passInput.type = 'password'; // Sembunyikan lagi
+        passInput.type = 'password';
         icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye'); // Ganti ikon jadi mata normal
+        icon.classList.add('fa-eye');
     }
 }
 
@@ -2317,9 +2343,6 @@ function printAllCards() {
 // 🤖 FITUR GOOGLE GEMINI AI STUDIO
 // ==========================================================
 
-// 🔑 TARUH API KEY GEMINI KAMU DI SINI:
-const GEMINI_API_KEY = "AIzaSyCITddDxONobXH-O7X46KU-O_gkfZWGZ14"; 
-
 // Tampilkan tombol chat AI hanya jika user sudah login (Taruh ini di dalam fungsi showPage() kamu jika mau)
 document.addEventListener("DOMContentLoaded", () => {
     if(localStorage.getItem('siempus_user')) {
@@ -2327,48 +2350,76 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// --- FITUR 1: AI AUTO-LENGKAPI BUKU (Update ke Flash 2.5) ---
-async function lengkapiBukuDenganAI() {
+// --- FITUR 1: AI AUTO-LENGKAPI BUKU (VIA BACKEND) ---
+function lengkapiBukuDenganAI() {
     const judul = document.getElementById('bJudul').value.trim();
     if (!judul) return Swal.fire('Oops', 'Ketik judul bukunya dulu ya!', 'warning');
-    if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("MASUKKAN_API_KEY")) return Swal.fire('Error', 'API Key Gemini belum dipasang di kode!', 'error');
 
     const btn = document.getElementById('btn-ai-buku');
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     btn.disabled = true;
 
-    // Perintah (Prompt) untuk AI agar mengembalikan data berformat JSON
     const prompt = `Berikan informasi buku nyata dengan judul mirip "${judul}". Balas HANYA dengan format JSON murni tanpa awalan/akhiran markdown. Format: {"pengarang":"nama", "penerbit":"nama", "tahun":"20xx", "kategori":"Kategori buku"}. Jika tidak tahu, tebak dengan masuk akal.`;
 
-    try {
-        // URL SUDAH DIUPDATE KE GEMINI-2.5-FLASH
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-        });
-        const data = await response.json();
-        
-        let textResult = data.candidates[0].content.parts[0].text;
-        // Bersihkan jika AI masih bandel mengirim markdown ```json
-        textResult = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
-        
-        const info = JSON.parse(textResult);
-        
-        // Isi otomatis ke dalam form
-        if(info.pengarang) document.getElementById('bPengarang').value = info.pengarang;
-        if(info.penerbit) document.getElementById('bPenerbit').value = info.penerbit;
-        if(info.tahun) document.getElementById('bTahun').value = info.tahun;
-        if(info.kategori) document.getElementById('bKategori').value = info.kategori;
+    google.script.run
+        .withFailureHandler(err => {
+            btn.innerHTML = '<i class="fas fa-magic"></i> AI'; btn.disabled = false;
+            Swal.fire('Gagal', 'Koneksi ke backend AI terputus.', 'error');
+        })
+        .withSuccessHandler(res => {
+            btn.innerHTML = '<i class="fas fa-magic"></i> AI'; btn.disabled = false;
+            if(res.status) {
+                let textResult = res.result.replace(/```json/g, '').replace(/```/g, '').trim();
+                try {
+                    const info = JSON.parse(textResult);
+                    if(info.pengarang) document.getElementById('bPengarang').value = info.pengarang;
+                    if(info.penerbit) document.getElementById('bPenerbit').value = info.penerbit;
+                    if(info.tahun) document.getElementById('bTahun').value = info.tahun;
+                    if(info.kategori) document.getElementById('bKategori').value = info.kategori;
+                    Swal.fire({toast:true, position:'top-end', icon:'success', title:'Buku dilengkapi AI!', showConfirmButton:false, timer:2000});
+                } catch(e) {
+                    Swal.fire('Error', 'Format data AI tidak sesuai.', 'error');
+                }
+            } else {
+                Swal.fire('Gagal', res.message, 'error');
+            }
+        }).callGeminiAI(prompt);
+}
 
-        Swal.fire({toast:true, position:'top-end', icon:'success', title:'Buku dilengkapi AI!', showConfirmButton:false, timer:2000});
-    } catch(e) {
-        console.error("AI Error:", e);
-        Swal.fire('Gagal', 'AI kesulitan mencari data buku ini.', 'error');
-    } finally {
-        btn.innerHTML = '<i class="fas fa-magic"></i> AI';
-        btn.disabled = false;
-    }
+// --- FITUR 3: WIDGET ASISTEN AI (VIA BACKEND) ---
+function sendAIChat() {
+    const inputEl = document.getElementById('ai-chat-input');
+    const msg = inputEl.value.trim();
+    if (!msg) return;
+
+    const chatBody = document.getElementById('ai-chat-body');
+    const btnSend = document.getElementById('btn-send-ai');
+    
+    chatBody.innerHTML += `<div class="p-2 bg-primary text-white rounded-3 shadow-sm" style="align-self: flex-end; max-width: 85%; font-size: 13px;">${msg}</div>`;
+    inputEl.value = '';
+    btnSend.disabled = true;
+    btnSend.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    const systemContext = buildDatabaseContext(); // Pastikan fungsi ini tetap ada di kodemu
+    const finalPrompt = `Konteks Data Perpustakaan Saat Ini:\n${systemContext}\n\nPertanyaan User: "${msg}"\n\nINSTRUKSI PENTING UNTUK AI:\n1. Jika user bertanya tentang data spesifik perpustakaan sekolah ini, jawab HANYA berdasarkan "Konteks Data" di atas. Jika data kosong, minta admin buka menu terkait.\n2. JIKA user bertanya hal UMUM, gunakan wawasan luasmu.\n3. Jawab dengan gaya bahasa ramah dan gaul.`;
+
+    google.script.run
+        .withFailureHandler(err => {
+            btnSend.disabled = false; btnSend.innerHTML = '<i class="fas fa-paper-plane"></i>';
+            chatBody.innerHTML += `<div class="p-2 bg-danger text-white rounded-3 shadow-sm" style="align-self: flex-start; max-width: 85%; font-size: 13px;">Koneksi error!</div>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+        })
+        .withSuccessHandler(res => {
+            btnSend.disabled = false; btnSend.innerHTML = '<i class="fas fa-paper-plane"></i>';
+            if(res.status) {
+                let botReply = res.result.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>');
+                chatBody.innerHTML += `<div class="p-2 bg-white rounded-3 border shadow-sm" style="align-self: flex-start; max-width: 85%; font-size: 13px;">${botReply}</div>`;
+            } else {
+                chatBody.innerHTML += `<div class="p-2 bg-warning text-dark rounded-3 shadow-sm" style="align-self: flex-start; max-width: 85%; font-size: 13px;">AI: ${res.message}</div>`;
+            }
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }).callGeminiAI(finalPrompt);
 }
 
 // --- FITUR 3: WIDGET ASISTEN AI BERBASIS DATABASE ---
@@ -2443,62 +2494,6 @@ document.getElementById('ai-chat-input')?.addEventListener("keypress", function(
     if (event.key === "Enter") { event.preventDefault(); sendAIChat(); } 
 });
 
-
-async function sendAIChat() {
-    const inputEl = document.getElementById('ai-chat-input');
-    const msg = inputEl.value.trim();
-    if (!msg) return;
-    if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("MASUKKAN_API_KEY")) return alert('API Key Gemini belum dipasang!');
-
-    const chatBody = document.getElementById('ai-chat-body');
-    const btnSend = document.getElementById('btn-send-ai');
-    
-    // Munculkan chat user
-    chatBody.innerHTML += `<div class="p-2 bg-primary text-white rounded-3 shadow-sm" style="align-self: flex-end; max-width: 85%; font-size: 13px;">${msg}</div>`;
-    inputEl.value = '';
-    btnSend.disabled = true;
-    btnSend.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
-    
-    // Scroll ke bawah
-    chatBody.scrollTop = chatBody.scrollHeight;
-
-    // --- INSTRUKSI HYBRID BARU UNTUK AI ---
-    const systemContext = buildDatabaseContext();
-    const finalPrompt = `Konteks Data Perpustakaan Saat Ini:\n${systemContext}\n\n` +
-        `Pertanyaan User: "${msg}"\n\n` +
-        `INSTRUKSI PENTING UNTUK AI:\n` +
-        `1. Jika user bertanya tentang data spesifik perpustakaan sekolah ini (jumlah buku, siswa terajin, siapa yang telat, dll), jawab HANYA berdasarkan "Konteks Data" di atas. Jika datanya kosong/belum termuat, minta user membuka halaman terkait (Dashboard/Buku/Riwayat) sebentar agar datanya masuk ke memori sistem.\n` +
-        `2. JIKA user bertanya hal UMUM di luar database (seputar dunia perpustakaan, buku, literasi, cara merawat buku, ide kegiatan, ringkasan novel, dll), gunakan wawasan luasmu sebagai AI Google untuk menjawabnya dengan cerdas dan komprehensif!\n` +
-        `3. Jawab dengan gaya bahasa asisten perpustakaan yang ramah, asyik, gaul tapi tetap profesional. Gunakan emoji secukupnya.`;
-
-    try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: finalPrompt }] }] })
-        });
-        const data = await response.json();
-        
-        // Cek jika response sukses
-        let botReply = "Maaf, saya sedang error berpikir.";
-        if (data.candidates && data.candidates.length > 0) {
-            botReply = data.candidates[0].content.parts[0].text;
-            // Konversi **tebal** markdown ke HTML dasar agar cantik
-            botReply = botReply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>');
-        }
-
-        // Munculkan chat AI
-        chatBody.innerHTML += `<div class="p-2 bg-white rounded-3 border shadow-sm" style="align-self: flex-start; max-width: 85%; font-size: 13px;">${botReply}</div>`;
-        
-    } catch(e) {
-        console.error("Chat AI Error:", e);
-        chatBody.innerHTML += `<div class="p-2 bg-danger text-white rounded-3 shadow-sm" style="align-self: flex-start; max-width: 85%; font-size: 13px;">Waduh, koneksi ke otak AI terputus. Cek internet atau API Key!</div>`;
-    } finally {
-        btnSend.disabled = false;
-        btnSend.innerHTML = '<i class="fas fa-paper-plane"></i>';
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }
-}
 
 </script>
 
