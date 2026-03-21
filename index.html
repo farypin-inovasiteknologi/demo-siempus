@@ -216,7 +216,7 @@ input, button, select, textarea {
       <div class="card login-card shadow-lg p-0" style="width: 420px; max-width: 90%; position: relative; overflow: visible !important;">
         <div class="floating-logo-container">
             <center>
-                <img id="login-logo-center" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgg6bHSnIfgcj_gIqIyF3B20gtgWPAexyj9E75gv1vta7C2Wo6s7BcxzHWig7bQyI3LqAc_D4jjRDnz5pl6B7Ygim7V38sDG5zsFchERdn4jPXedBYuJ9b2LUU0wgTgv883gevvYbhxL62ivaNvwlFgdRU9s_ALNdYzn9y7fHRCWUtHjdjt4vVZpCLVPIIL/s70/Logo%20SiE-MPus.png" style="width:50px" crossorigin="anonymous">
+                <img id="login-logo-center" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s850/Logo%20SiE-MPus%20baru%20ok.png" style="width:50px" crossorigin="anonymous">
             </center>
         </div>
         <div class="card-body px-4 pb-4 pt-5 mt-4">
@@ -224,7 +224,7 @@ input, button, select, textarea {
             <h4 class="fw-bold mb-1" id="login-school-name" style="color: #4361ee;">SIE-MPUS</h4>
             <small class="text-muted">Sistem E-Manajemen Perpustakaan Sekolah</small>
             <center>
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgg6bHSnIfgcj_gIqIyF3B20gtgWPAexyj9E75gv1vta7C2Wo6s7BcxzHWig7bQyI3LqAc_D4jjRDnz5pl6B7Ygim7V38sDG5zsFchERdn4jPXedBYuJ9b2LUU0wgTgv883gevvYbhxL62ivaNvwlFgdRU9s_ALNdYzn9y7fHRCWUtHjdjt4vVZpCLVPIIL/s70/Logo%20SiE-MPus.png" class="width:50px">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s850/Logo%20SiE-MPus%20baru%20ok.png" class="width:50px">
              </center>
           </div>
           <marquee id="login-running-text" class="mb-3 small fw-bold text-primary">Selamat datang di aplikasi Sistem E-Manajemen Perpustakaan Sekolah.</marquee>
@@ -963,35 +963,41 @@ document.getElementById('btnApplyCrop').addEventListener('click', function() {
     bootstrap.Modal.getInstance(document.getElementById('modalCrop')).hide();
 });
 
-/// --- INIT APP (ANTI KEDIP / FLASH SAAT RELOAD) ---
+// --- INIT APP (SUPER AMAN ANTI-LOGOUT SAAT RELOAD) ---
 document.addEventListener("DOMContentLoaded", function() {
     const savedUser = localStorage.getItem('siempus_user');
     const savedUname = localStorage.getItem('siempus_username');
     const savedPage = localStorage.getItem('siempus_page');
 
-    if(savedUser) {
-        // JIKA SUDAH LOGIN: 
-        // Form login sudah otomatis tersembunyi berkat class "d-none" di HTML tadi.
-        // Kita tinggal memunculkan main-app.
+    // Logika verifikasi yang ketat (Tolak jika null, teks "null", atau kosong)
+    if(savedUser && savedUser !== "null" && savedUser !== "undefined" && savedUser.trim() !== "") {
+        
+        // --- BERHASIL DETEKSI SESI LOGIN ---
         currentUser = savedUser;
         currentUsername = savedUname;
         document.getElementById('user-display-name').textContent = currentUser;
         
+        // Hapus paksa elemen login
+        const loginApp = document.getElementById('login-app');
+        loginApp.classList.remove('d-flex');
+        loginApp.classList.add('d-none');
+        
+        // Munculkan aplikasi utama
         document.getElementById('main-app').classList.remove('d-none');
-        showPage(savedPage || 'dashboard');
+        showPage(savedPage);
         setupEnterKeys();
+        
     } else {
-        // JIKA BELUM LOGIN:
-        // Hapus d-none dan tambahkan d-flex agar form login muncul di tengah layar.
+        // --- JIKA BELUM LOGIN / DATA KOSONG ---
         const loginApp = document.getElementById('login-app');
         loginApp.classList.remove('d-none');
         loginApp.classList.add('d-flex');
+        document.getElementById('main-app').classList.add('d-none');
     }
     
-    // Muat Pengaturan dari Database
+    // Memuat Pengaturan dari Database
     loadAppConfig();
     
-    // Setup event listener lainnya
     const toggleBtn = document.getElementById('btn-toggle-menu');
     if(toggleBtn){
         toggleBtn.onclick = () => { 
@@ -1144,13 +1150,22 @@ function attemptLogin() {
         .withSuccessHandler(res => {
             btn.innerHTML = 'MASUK DASHBOARD'; btn.disabled = false;
             if(res.status) {
-                currentUser = res.nama;
+                // Pastikan nama tidak kosong, jika kosong gunakan username
+                currentUser = (res.nama && res.nama.trim() !== "") ? res.nama : res.username; 
                 currentUsername = res.username;
+                
                 localStorage.setItem('siempus_user', currentUser);
                 localStorage.setItem('siempus_username', currentUsername);
+                localStorage.setItem('siempus_page', 'dashboard'); // Langsung kunci ke dashboard saat awal login
+                
                 document.getElementById('user-display-name').textContent = currentUser;
-                document.getElementById('login-app').classList.remove('d-flex');
-                document.getElementById('login-app').classList.add('d-none');
+                
+                // Hilangkan form login
+                const loginApp = document.getElementById('login-app');
+                loginApp.classList.remove('d-flex');
+                loginApp.classList.add('d-none');
+                
+                // Tampilkan halaman utama
                 document.getElementById('main-app').classList.remove('d-none');
                 showPage('dashboard');
                 setupEnterKeys();
@@ -1197,9 +1212,31 @@ document.querySelectorAll('.nav-link').forEach(link => {
 });
 
 function showPage(pageId) {
+    // Fallback keamanan jika memori browser rusak/kosong
+    if (!pageId || pageId === "null" || pageId === "undefined" || pageId.trim() === "") {
+        pageId = 'dashboard';
+    }
+    
     localStorage.setItem('siempus_page', pageId);
     document.querySelectorAll('.page-section').forEach(p => p.classList.add('d-none'));
-    document.getElementById('page-' + pageId).classList.remove('d-none');
+    
+    // Cari target halaman, jika tidak ketemu, paksa ke dashboard (mencegah JS Crash)
+    const targetPage = document.getElementById('page-' + pageId);
+    if (targetPage) {
+        targetPage.classList.remove('d-none');
+    } else {
+        document.getElementById('page-dashboard').classList.remove('d-none');
+        pageId = 'dashboard';
+        localStorage.setItem('siempus_page', 'dashboard');
+    }
+    
+    // Sinkronisasi menu samping (Sidebar)
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    const activeSidebar = document.getElementById('nav-' + pageId);
+    if(activeSidebar) activeSidebar.classList.add('active');
+
+    // Sinkronisasi menu bawah (HP)
+    if (typeof updateMobileNav === "function") { updateMobileNav(pageId); }
     
     const titles = {
         'dashboard': 'Dashboard Admin', 'peminjaman': 'Peminjaman', 'pengembalian': 'Pengembalian',
