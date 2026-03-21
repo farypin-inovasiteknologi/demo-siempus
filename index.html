@@ -963,21 +963,30 @@ document.getElementById('btnApplyCrop').addEventListener('click', function() {
     bootstrap.Modal.getInstance(document.getElementById('modalCrop')).hide();
 });
 
-// --- INIT APP ---
-window.onload = function() {
+// --- INIT APP (DIUBAH KE DOMContentLoaded & FIX D-FLEX) ---
+document.addEventListener("DOMContentLoaded", function() {
     const savedUser = localStorage.getItem('siempus_user');
     const savedUname = localStorage.getItem('siempus_username');
     const savedPage = localStorage.getItem('siempus_page');
 
+    // CEK SESI LOGIN
     if(savedUser) {
         currentUser = savedUser;
         currentUsername = savedUname;
         document.getElementById('user-display-name').textContent = currentUser;
-        document.getElementById('login-app').classList.add('d-none');
+        
+        // FIX: Hapus d-flex agar form login benar-benar hilang saat direload
+        const loginApp = document.getElementById('login-app');
+        loginApp.classList.remove('d-flex'); 
+        loginApp.classList.add('d-none');
+        
+        // Tampilkan Dashboard
         document.getElementById('main-app').classList.remove('d-none');
         showPage(savedPage || 'dashboard');
         setupEnterKeys();
     }
+    
+    // Muat Pengaturan
     loadAppConfig();
     
     const toggleBtn = document.getElementById('btn-toggle-menu');
@@ -1010,7 +1019,7 @@ window.onload = function() {
         div.innerHTML = '<input class="form-check-input" type="checkbox" id="chkArsip" onchange="loadHistory()"><label class="form-check-label small fw-bold" for="chkArsip">Lihat Arsip Lama</label>';
         riwayatHeader.appendChild(div);
     }
-};
+});
 
 function injectSearchBox(pageId, placeholder, callback) {
     const container = document.querySelector(`#${pageId} .d-flex.flex-column`);
