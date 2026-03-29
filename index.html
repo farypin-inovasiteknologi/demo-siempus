@@ -240,75 +240,86 @@ input, button, select, textarea {
 
     <div id="overlay" class="overlay"></div>
 
-   <div id="login-app" class="d-none align-items-center justify-content-center vh-100" style="background-size: cover; background-position: center;">
-      <div class="card login-card shadow-lg p-0" style="width: 420px; max-width: 90%; position: relative; overflow: visible !important;">
-        <div class="floating-logo-container">
-            <center>
-                <img id="login-logo-center" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s80/Logo%20SiE-MPus%20baru%20ok.png" style="width:50px" crossorigin="anonymous">
-            </center>
-        </div>
-        <div class="card-body px-4 pb-4 pt-5 mt-4">
-          <div class="text-center mb-4">
-            <h4 class="fw-bold mb-1" id="login-school-name" style="color: #4361ee;">SIE-MPUS</h4>
-            <small class="text-muted">Sistem E-Manajemen Perpustakaan Sekolah<br> Dilengkapi Fitur AI</small>
+   
+  <div id="login-app" class="d-none align-items-center justify-content-center vh-100" style="background-size: cover; background-position: center; transition: background 0.5s ease-in-out;">
+      <div class="card login-card shadow-lg border-0 p-0" style="max-width: 900px; width: 95%; border-radius: 20px; overflow: hidden; background: rgba(255,255,255,0.85); backdrop-filter: blur(15px);">
+        <div class="row g-0" style="min-height: 550px;">
+          
+          <div class="col-md-6 d-flex flex-column justify-content-between p-4 p-md-5 text-center bg-white bg-opacity-75 position-relative" id="panel-left-mobile">
+            <div>
+              <div class="d-flex justify-content-center align-items-center gap-3 mb-3 mt-3 mt-md-0">
+                  <img id="login-logo-instansi" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" style="width:70px; height:70px; object-fit:contain;" crossorigin="anonymous">
+                  <img id="login-logo-sekolah" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" style="width:80px; height:80px; object-fit:contain;" crossorigin="anonymous">
+              </div>
+              <h5 class="fw-bold mb-0 text-dark text-uppercase" id="login-instansi-name">DINAS PENDIDIKAN</h5>
+              <h4 class="fw-bold text-primary mb-2 text-uppercase" id="login-school-name">NAMA SEKOLAH</h4>
+              <p class="small text-muted mb-4 px-2" id="login-alamat-text">Alamat sekolah akan tampil di sini...</p>
+              
+              <hr class="w-50 mx-auto border-secondary opacity-25">
+              
+              <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s80/Logo%20SiE-MPus%20baru%20ok.png" style="width:45px; margin-bottom:5px;">
+              <h5 class="fw-bold text-secondary mb-1">SiE-MPuS</h5>
+              <div class="marquee-container small fw-bold text-primary mb-3">
+                <div id="login-running-text" class="marquee-content">Sistem E-Manajemen Perpustakaan Sekolah Terpadu.</div>
+              </div>
+            </div>
+            
+            <button class="btn btn-primary rounded-pill fw-bold shadow-lg d-md-none mb-4 py-3 text-uppercase" onclick="switchLoginPanel('right')" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); letter-spacing: 1px;">
+              Masuk Aplikasi <i class="fas fa-arrow-right ms-2"></i>
+            </button>
 
-            <center>
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s80/Logo%20SiE-MPus%20baru%20ok.png" class="width:50px">
-             </center>
+            <footer class="small text-muted mt-auto">
+              <span id="login-footer-text" class="d-block fw-bold mb-1">© 2026 SiE-MPuS</span>
+              Powered by <a href='https://www.farypin-inovasiteknologi.com' class="fw-bold text-decoration-none" style='color: var(--primary-color);'>PT Farypin Inovasi</a>
+            </footer>
           </div>
-          <div class="marquee-container mb-3 small fw-bold text-primary">
-    <div id="login-running-text" class="marquee-content">Selamat datang di aplikasi Sistem E-Manajemen Perpustakaan Sekolah.</div>
-</div>
-          <form id="loginForm" onsubmit="event.preventDefault(); attemptLogin();">
-            <div class="mb-3">
-                <label for="uName" class="form-label small fw-bold text-muted">Username</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-user text-primary"></i></span>
-                    <input type="text" class="form-control border-start-0" id="uName" placeholder="Masukkan Username" required>
-                </div>
+
+          <div class="col-md-6 d-none d-md-flex flex-column justify-content-center p-4 p-md-5 bg-white shadow-sm" id="panel-right-mobile">
+            <button class="btn btn-light btn-sm text-start mb-4 d-md-none fw-bold text-secondary border shadow-sm rounded-pill px-3 align-self-start" onclick="switchLoginPanel('left')">
+              <i class="fas fa-arrow-left me-2"></i> Kembali
+            </button>
+            
+            <div class="text-center mb-4">
+               <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s80/Logo%20SiE-MPus%20baru%20ok.png" style="width:55px; margin-bottom:10px;">
+               <h4 class="fw-bold text-dark mb-1">Silakan Login</h4>
+               <p class="text-muted small">Akses Sistem Administrator</p>
             </div>
-            <div class="mb-4">
-                <label for="uPass" class="form-label small fw-bold text-muted">Password</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-lock text-primary"></i></span>
-                    <input type="password" class="form-control border-start-0 border-end-0" id="uPass" placeholder="Masukkan Password" required>
-                    <button class="btn btn-light border border-start-0 text-muted" type="button" onclick="togglePassword()">
-                        <i class="fas fa-eye" id="eyeIcon"></i>
-                    </button>
-                </div>
-            </div>
-            <button type="submit" id="btnLogin" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm hover-scale">MASUK DASHBOARD</button>
-          </form>
-          <div class="row g-2 mt-3">
+
+            <form id="loginForm" onsubmit="event.preventDefault(); attemptLogin();">
+              <div class="mb-3">
+                  <label class="form-label small fw-bold text-muted">Username</label>
+                  <div class="input-group">
+                      <span class="input-group-text bg-light border-end-0"><i class="fas fa-user text-primary"></i></span>
+                      <input type="text" class="form-control border-start-0 bg-light" id="uName" placeholder="Ketik username..." required>
+                  </div>
+              </div>
+              <div class="mb-4">
+                  <label class="form-label small fw-bold text-muted">Password</label>
+                  <div class="input-group">
+                      <span class="input-group-text bg-light border-end-0"><i class="fas fa-lock text-primary"></i></span>
+                      <input type="password" class="form-control border-start-0 border-end-0 bg-light" id="uPass" placeholder="Ketik password..." required>
+                      <button class="btn btn-light border border-start-0 text-muted bg-light" type="button" onclick="togglePassword()">
+                          <i class="fas fa-eye" id="eyeIcon"></i>
+                      </button>
+                  </div>
+              </div>
+              <button type="submit" id="btnLogin" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm hover-scale text-uppercase" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color));">Login Sistem</button>
+            </form>
+            
+            <div class="row g-2 mt-4 pt-3 border-top">
                 <div class="col-6">
-                    <a id="btn-dl-win" href="#" target="_blank" class="btn btn-outline-secondary w-100 py-2 small fw-bold d-none" style="font-size: 12px; border-radius: 10px;">
-                        <i class="fab fa-windows text-info"></i> App Windows
+                    <a id="btn-dl-win" href="#" target="_blank" class="btn btn-outline-secondary w-100 py-2 small fw-bold d-none rounded-pill" style="font-size: 11px;">
+                        <i class="fab fa-windows text-info fa-lg"></i> App Windows
                     </a>
                 </div>
                 <div class="col-6">
-                    <a id="btn-dl-and" href="#" target="_blank" class="btn btn-outline-success w-100 py-2 small fw-bold d-none" style="font-size: 12px; border-radius: 10px;">
-                        <i class="fab fa-android text-success"></i> App Android
+                    <a id="btn-dl-and" href="#" target="_blank" class="btn btn-outline-success w-100 py-2 small fw-bold d-none rounded-pill" style="font-size: 11px;">
+                        <i class="fab fa-android text-success fa-lg"></i> App Android
                     </a>
                 </div>
             </div>
-
-<footer class="mt-4 small container">
-  <div class="text-center text-muted mb-2">
-     <span id="login-footer-text">© 2006 SiE-MPuS | All Rights Reserved.</span>
-  </div>
-
-  <div class="d-flex justify-content-between align-items-center border-top pt-2">
-    <div>
-       <a href="#" data-bs-toggle="modal" data-bs-target="#modalPrivasi" class="text-decoration-none text-primary fw-bold" style="font-size: 11px;">
-         <i class="fas fa-shield-alt me-1"></i>Kebijakan Privasi</a>
-    </div>
-
-    <div class="text-muted text-end" style="font-size: 11px;">
-       Powered by : <a href='https://www.farypin-inovasiteknologi.com' rel='dofollow' class="fw-bold" style='color:blue; text-decoration:none;'>PT Farypin Inovasi Teknologi</a>
-    </div>
-  </div>
-</footer>
-
+          </div>
+          
         </div>
       </div>
     </div>
@@ -489,14 +500,30 @@ input, button, select, textarea {
                      <div class="glass-card p-4 h-100">
                         <h5 class="fw-bold text-primary mb-3"><i class="fas fa-sliders-h me-2"></i>Aturan & Identitas</h5>
                         <form id="formConfig">
-                           <div class="mb-2"><label for="cfgNama" class="small fw-bold">Nama Sekolah</label><input type="text" id="cfgNama" class="form-control"></div>
-                           
-                           <div class="mb-3 bg-light p-2 rounded border">
-                               <label class="small fw-bold text-primary">Upload Logo Sekolah (1:1)</label>
-                               <input type="file" id="fileLogo" class="form-control form-control-sm" accept="image/*">
-                               <input type="hidden" id="cfgLogo"> <img id="previewLogo" src="" class="mt-2 rounded" style="max-height: 60px; display:none;">
+                           <div class="row mb-2">
+                             <div class="col-md-6"><label for="cfgInstansi" class="small fw-bold">Nama Instansi Atas</label><input type="text" id="cfgInstansi" class="form-control" placeholder="Misal: Dinas Pendidikan..."></div>
+                             <div class="col-md-6"><label for="cfgNama" class="small fw-bold">Nama Sekolah</label><input type="text" id="cfgNama" class="form-control" placeholder="Misal: SMAN 1..."></div>
                            </div>
                            
+                           <div class="mb-3"><label for="cfgAlamat" class="small fw-bold">Alamat Lengkap Sekolah</label><textarea id="cfgAlamat" class="form-control" rows="2" placeholder="Jln. Raya Pendidikan No..."></textarea></div>
+                           
+                           <div class="row mb-3">
+                               <div class="col-md-6">
+                                   <div class="bg-light p-2 rounded border h-100">
+                                       <label class="small fw-bold text-primary">Upload Logo Instansi (1:1)</label>
+                                       <input type="file" id="fileLogoInstansi" class="form-control form-control-sm mb-2" accept="image/*">
+                                       <input type="hidden" id="cfgLogoInstansi"> <img id="previewLogoInstansi" src="" class="rounded" style="max-height: 50px; display:none;">
+                                   </div>
+                               </div>
+                               <div class="col-md-6 mt-2 mt-md-0">
+                                   <div class="bg-light p-2 rounded border h-100">
+                                       <label class="small fw-bold text-primary">Upload Logo Sekolah (1:1)</label>
+                                       <input type="file" id="fileLogo" class="form-control form-control-sm mb-2" accept="image/*">
+                                       <input type="hidden" id="cfgLogo"> <img id="previewLogo" src="" class="rounded" style="max-height: 50px; display:none;">
+                                   </div>
+                               </div>
+                           </div>
+
                            <div class="mb-3 bg-light p-2 rounded border">
                                <label class="small fw-bold text-primary">Upload Background Login (5:3)</label>
                                <input type="file" id="fileBg" class="form-control form-control-sm" accept="image/*">
@@ -507,39 +534,22 @@ input, button, select, textarea {
                                <div class="col-6 mb-2"><label for="cfgHp" class="small fw-bold">No. HP/WA</label><input type="text" id="cfgHp" class="form-control"></div>
                                <div class="col-6 mb-2"><label for="cfgWeb" class="small fw-bold">Website</label><input type="text" id="cfgWeb" class="form-control"></div>
                            </div>
-                           <div class="mb-2"><label for="cfgEmail" class="small fw-bold">Email</label><input type="text" id="cfgEmail" class="form-control"></div>
-                           
-                           <div class="mb-2"><label for="cfgFolder" class="small fw-bold">ID Folder Drive (Penyimpanan Foto)</label><input type="text" id="cfgFolder" class="form-control" placeholder="Kosongkan jika auto-create"></div>
+                           <div class="row">
+                               <div class="col-6 mb-2"><label for="cfgEmail" class="small fw-bold">Email</label><input type="text" id="cfgEmail" class="form-control"></div>
+                               <div class="col-6 mb-2"><label for="cfgFolder" class="small fw-bold">ID Folder Drive</label><input type="text" id="cfgFolder" class="form-control" placeholder="Kosongkan jika auto"></div>
+                           </div>
                            
                            <div class="mb-2"><label for="cfgRun" class="small fw-bold">Running Text</label><textarea id="cfgRun" class="form-control" rows="2"></textarea></div>
+                           
                            <div class="row">
-                         <div class="col-6 mb-2"><label for="cfgUrlWin" class="small fw-bold text-info"><i class="fab fa-windows"></i> Link App Windows</label><input type="text" id="cfgUrlWin" class="form-control" placeholder="https://..."></div>
-                      <div class="col-6 mb-2"><label for="cfgUrlAnd" class="small fw-bold text-success"><i class="fab fa-android"></i> Link App Android</label><input type="text" id="cfgUrlAnd" class="form-control" placeholder="https://..."></div>
-                        </div>
+                               <div class="col-6 mb-2"><label for="cfgUrlWin" class="small fw-bold text-info"><i class="fab fa-windows"></i> Link App Windows</label><input type="text" id="cfgUrlWin" class="form-control" placeholder="https://..."></div>
+                               <div class="col-6 mb-2"><label for="cfgUrlAnd" class="small fw-bold text-success"><i class="fab fa-android"></i> Link App Android</label><input type="text" id="cfgUrlAnd" class="form-control" placeholder="https://..."></div>
+                           </div>
                            <div class="row">
                               <div class="col-6"><label for="cfgDenda" class="small fw-bold">Denda (Rp)</label><input type="number" id="cfgDenda" class="form-control"></div>
                               <div class="col-6"><label for="cfgDurasi" class="small fw-bold">Durasi (Hari)</label><input type="number" id="cfgDurasi" class="form-control"></div>
                            </div>
                            <button type="button" class="btn btn-primary w-100 mt-4 py-2 fw-bold rounded-pill shadow-sm" onclick="saveSettings()">SIMPAN PENGATURAN</button>
-                        </form>
-                     </div>
-                  </div>
-                  <div class="col-md-6">
-                     <div class="glass-card p-4 h-100">
-                        <h5 class="fw-bold text-danger mb-3"><i class="fas fa-user-lock me-2"></i>Akun Admin</h5>
-                        <div class="alert alert-warning small">Ganti akun = Logout otomatis.</div>
-                        <form id="formUser">
-                           <div class="mb-2"><label for="accUser" class="small fw-bold">Username Baru</label><input type="text" id="accUser" class="form-control"></div>
-                          <div class="mb-2">
-    <label for="accPass" class="small fw-bold">Password Baru</label>
-    <div class="input-group">
-        <input type="password" id="accPass" class="form-control">
-        <button class="btn btn-outline-secondary" type="button" onclick="toggleAdminPassword()" title="Lihat Password">
-            <i class="fas fa-eye" id="eyeIconAdmin"></i>
-        </button>
-    </div>
-</div>
-                           <button type="button" class="btn btn-danger w-100 mt-3 rounded-pill" onclick="updateAccount()">UPDATE AKUN</button>
                         </form>
                      </div>
                   </div>
@@ -985,6 +995,7 @@ let cropperInstance = null;
 let currentCropTarget = ''; 
 let uploadBgBase64 = null; 
 let uploadLogoBase64 = null; 
+let uploadLogoInstansiBase64 = null;
 
 // --- FITUR BARU: ANIMASI LOADING HITUNG MUNDUR ---
 let swalCountdownInterval;
@@ -1135,6 +1146,7 @@ function processExportHistory(start, end) {
 
 // --- LOGIKA CROPPER ---
 document.getElementById('fileLogo').addEventListener('change', function(e) { openCropper(e, 'logo', 1/1); });
+document.getElementById('fileLogoInstansi').addEventListener('change', function(e) { openCropper(e, 'logoInstansi', 1/1); });
 document.getElementById('fileBg').addEventListener('change', function(e) { openCropper(e, 'bg', 5/3); });
 
 function openCropper(e, target, ratio) {
@@ -1158,16 +1170,20 @@ function openCropper(e, target, ratio) {
 
 document.getElementById('btnApplyCrop').addEventListener('click', function() {
     if(!cropperInstance) return;
-    if(currentCropTarget === 'logo') {
+    if(currentCropTarget === 'logo' || currentCropTarget === 'logoInstansi') {
         const canvas = cropperInstance.getCroppedCanvas({ width: 400, height: 400 });
-        uploadLogoBase64 = canvas.toDataURL('image/png'); 
-        document.getElementById('previewLogo').src = uploadLogoBase64; 
-        document.getElementById('previewLogo').style.display = 'block';
+        const resultBase64 = canvas.toDataURL('image/png'); 
+        if (currentCropTarget === 'logo') {
+            uploadLogoBase64 = resultBase64; 
+            document.getElementById('previewLogo').src = uploadLogoBase64; document.getElementById('previewLogo').style.display = 'block';
+        } else {
+            uploadLogoInstansiBase64 = resultBase64; 
+            document.getElementById('previewLogoInstansi').src = uploadLogoInstansiBase64; document.getElementById('previewLogoInstansi').style.display = 'block';
+        }
     } else {
         const canvas = cropperInstance.getCroppedCanvas({ width: 1280, height: 768 });
         uploadBgBase64 = canvas.toDataURL('image/jpeg', 0.8); 
-        document.getElementById('previewBg').src = uploadBgBase64; 
-        document.getElementById('previewBg').style.display = 'block';
+        document.getElementById('previewBg').src = uploadBgBase64; document.getElementById('previewBg').style.display = 'block';
     }
     bootstrap.Modal.getInstance(document.getElementById('modalCrop')).hide();
 });
@@ -1282,62 +1298,70 @@ function loadAppConfig() {
     google.script.run
         .withFailureHandler(err => console.log("Gagal memuat config:", err))
         .withSuccessHandler(cfg => {
-        const logoSrc = cfg.UrlLogo || cfg.LogoBase64;
+        const logoSrc = cfg.UrlLogo || cfg.LogoBase64; 
         const bgSrc = cfg.UrlBackground;
+        const logoInstansiSrc = cfg.UrlLogoInstansi;
 
+        const fallback = 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
         if(logoSrc) {
             globalLogoUrl = logoSrc; 
-            const l1 = document.getElementById('login-logo');
-            const l2 = document.getElementById('sidebar-logo');
-            const l3 = document.getElementById('login-logo-center');
-            const fallback = 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
-            if(l1) { l1.src = logoSrc; l1.onerror = () => l1.src = fallback; }
+            const l2 = document.getElementById('sidebar-logo'); const l3 = document.getElementById('login-logo-sekolah');
             if(l2) { l2.src = logoSrc; l2.onerror = () => l2.src = fallback; }
             if(l3) { l3.src = logoSrc; l3.onerror = () => l3.src = fallback; }
-            const pLogo = document.getElementById('previewLogo');
-            if(pLogo && logoSrc.length > 5) { pLogo.src = logoSrc; pLogo.style.display = 'block'; }
+            const pLogo = document.getElementById('previewLogo'); if(pLogo && logoSrc.length > 5) { pLogo.src = logoSrc; pLogo.style.display = 'block'; }
+            const mLogo = document.getElementById('mobile-logo-img'); if(mLogo) { mLogo.src = logoSrc; mLogo.onerror = () => mLogo.src = fallback; }
+        }
+        
+        if(logoInstansiSrc) {
+            const lInstansi = document.getElementById('login-logo-instansi');
+            if(lInstansi) { lInstansi.src = logoInstansiSrc; lInstansi.onerror = () => lInstansi.src = fallback; }
+            const pLogoIns = document.getElementById('previewLogoInstansi'); if(pLogoIns && logoInstansiSrc.length > 5) { pLogoIns.src = logoInstansiSrc; pLogoIns.style.display = 'block'; }
         }
         
         if(cfg.NamaSekolah) {
-            const n1 = document.getElementById('login-school-name');
-            const n2 = document.getElementById('sidebar-school-name');
-            if(n1) n1.textContent = cfg.NamaSekolah;
-            if(n2) n2.textContent = cfg.NamaSekolah;
+            const n1 = document.getElementById('login-school-name'); const n2 = document.getElementById('sidebar-school-name'); const mText = document.getElementById('mobile-school-text');
+            if(n1) n1.textContent = cfg.NamaSekolah; if(n2) n2.textContent = cfg.NamaSekolah; if(mText) mText.textContent = cfg.NamaSekolah;
             document.title = cfg.NamaSekolah + ' - Library';
         }
         
-        // --- FITUR BARU: FOOTER OTOMATIS BERDASARKAN NAMA SEKOLAH ---
+        if(cfg.NamaInstansi) {
+            const insText = document.getElementById('login-instansi-name');
+            if(insText) insText.textContent = cfg.NamaInstansi;
+        }
+
+        if(cfg.AlamatSekolah) {
+            const alamatText = document.getElementById('login-alamat-text');
+            if(alamatText) alamatText.textContent = cfg.AlamatSekolah;
+        }
+        
         const namaSekolahFooter = cfg.NamaSekolah || 'Sistem E Manajemen Perpustakaan Sekolah';
         const footerTeksOtomatis = `© 2026 SiE-MPuS ${namaSekolahFooter}. Hak Cipta Dilindungi.`;
-        const f1 = document.getElementById('login-footer-text');
-        const f2 = document.getElementById('sidebar-footer-text');
-        if(f1) f1.innerHTML = footerTeksOtomatis;
-        if(f2) f2.innerHTML = footerTeksOtomatis;
+        const f1 = document.getElementById('login-footer-text'); const f2 = document.getElementById('sidebar-footer-text');
+        if(f1) f1.innerHTML = footerTeksOtomatis; if(f2) f2.innerHTML = footerTeksOtomatis;
         
-        // --- FITUR BARU: MENAMPILKAN TOMBOL DOWNLOAD JIKA URL ADA ---
-        const btnWin = document.getElementById('btn-dl-win');
-        const btnAnd = document.getElementById('btn-dl-and');
-        if(btnWin && cfg.UrlWindows && cfg.UrlWindows.length > 5) {
-            btnWin.href = cfg.UrlWindows;
-            btnWin.classList.remove('d-none'); // Munculkan tombol Windows
-        }
-        if(btnAnd && cfg.UrlAndroid && cfg.UrlAndroid.length > 5) {
-            btnAnd.href = cfg.UrlAndroid;
-            btnAnd.classList.remove('d-none'); // Munculkan tombol Android
-        }
+        const btnWin = document.getElementById('btn-dl-win'); const btnAnd = document.getElementById('btn-dl-and');
+        if(btnWin && cfg.UrlWindows && cfg.UrlWindows.length > 5) { btnWin.href = cfg.UrlWindows; btnWin.classList.remove('d-none'); }
+        if(btnAnd && cfg.UrlAndroid && cfg.UrlAndroid.length > 5) { btnAnd.href = cfg.UrlAndroid; btnAnd.classList.remove('d-none'); }
         
-        if(cfg.RunningText) {
-            const rt = document.getElementById('login-running-text');
-            if(rt) rt.textContent = cfg.RunningText;
-        }
-        
-        if(bgSrc) {
-            const la = document.getElementById('login-app');
-            if(la) la.style.backgroundImage = `url('${bgSrc}')`;
-            const pBg = document.getElementById('previewBg');
-            if(pBg && bgSrc.length > 5) { pBg.src = bgSrc; pBg.style.display = 'block'; }
-        }
+        if(cfg.RunningText) { const rt = document.getElementById('login-running-text'); if(rt) rt.textContent = cfg.RunningText; }
+        if(bgSrc) { const la = document.getElementById('login-app'); if(la) la.style.backgroundImage = `url('${bgSrc}')`; const pBg = document.getElementById('previewBg'); if(pBg && bgSrc.length > 5) { pBg.src = bgSrc; pBg.style.display = 'block'; } }
     }).getAppConfig();
+}
+
+function switchLoginPanel(direction) {
+    const leftPanel = document.getElementById('panel-left-mobile');
+    const rightPanel = document.getElementById('panel-right-mobile');
+    if (direction === 'right') {
+        leftPanel.classList.add('d-none');
+        leftPanel.classList.remove('d-flex');
+        rightPanel.classList.remove('d-none');
+        rightPanel.classList.add('d-flex');
+    } else {
+        rightPanel.classList.add('d-none');
+        rightPanel.classList.remove('d-flex');
+        leftPanel.classList.remove('d-none');
+        leftPanel.classList.add('d-flex');
+    }
 }
 
 // ==========================================================
@@ -1848,6 +1872,9 @@ function loadSettingsForm() {
             document.getElementById('cfgLogo').value = cfg.UrlLogo || '';
             document.getElementById('cfgBg').value = cfg.UrlBackground || ''; 
             document.getElementById('cfgRun').value = cfg.RunningText || '';
+            document.getElementById('cfgInstansi').value = cfg.NamaInstansi || '';
+            document.getElementById('cfgAlamat').value = cfg.AlamatSekolah || '';
+            document.getElementById('cfgLogoInstansi').value = cfg.UrlLogoInstansi || '';
             // (cfgFoot Dihapus, diganti url Android & Windows)
             document.getElementById('cfgUrlWin').value = cfg.UrlWindows || '';
             document.getElementById('cfgUrlAnd').value = cfg.UrlAndroid || '';
@@ -1866,15 +1893,17 @@ function loadSettingsForm() {
 function saveSettings() {
     const data = {
         namaSekolah: document.getElementById('cfgNama').value, 
+        namaInstansi: document.getElementById('cfgInstansi').value, 
+        alamatSekolah: document.getElementById('cfgAlamat').value, 
         urlLogo: document.getElementById('cfgLogo').value, 
+        urlLogoInstansi: document.getElementById('cfgLogoInstansi').value, 
         urlBg: document.getElementById('cfgBg').value, 
         uploadLogo: uploadLogoBase64, 
-        uploadBg: uploadBgBase64,     
+        uploadLogoInstansi: uploadLogoInstansiBase64, 
+        uploadBg: uploadBgBase64, 
         runningText: document.getElementById('cfgRun').value, 
-        // Mengirim URL aplikasi ke Database (Bukan teks footer lagi)
         urlWin: document.getElementById('cfgUrlWin').value, 
         urlAnd: document.getElementById('cfgUrlAnd').value, 
-        
         denda: document.getElementById('cfgDenda').value, 
         durasi: document.getElementById('cfgDurasi').value, 
         nohp: document.getElementById('cfgHp').value, 
@@ -1882,22 +1911,13 @@ function saveSettings() {
         email: document.getElementById('cfgEmail').value, 
         idFolder: document.getElementById('cfgFolder').value
     };
-    
-    let desc = 'Sedang memperbarui aturan dan identitas...';
-    if(uploadBgBase64 || uploadLogoBase64) desc = 'Sedang mengunggah file foto ke Google Drive...';
+    let desc = 'Sedang memperbarui aturan dan identitas...'; 
+    if(uploadBgBase64 || uploadLogoBase64 || uploadLogoInstansiBase64) desc = 'Sedang mengunggah file foto ke Google Drive...';
     showSmartLoading('Menyimpan Pengaturan...', desc);
-    
-    google.script.run
-        .withFailureHandler(handleNetworkError)
-        .withSuccessHandler(res => { 
-            if(res.status) { 
-                Swal.fire({title: 'Berhasil', text: 'Pengaturan tersimpan.', icon: 'success'}).then(() => {
-                    uploadBgBase64 = null; 
-                    uploadLogoBase64 = null;
-                    loadAppConfig(); 
-                }); 
-            } else Swal.fire('Gagal', res.message, 'error'); 
-        }).saveAppConfig(data);
+    google.script.run.withFailureHandler(handleNetworkError).withSuccessHandler(res => { 
+        if(res.status) { Swal.fire({title: 'Berhasil', text: 'Pengaturan tersimpan.', icon: 'success'}).then(() => { uploadBgBase64 = null; uploadLogoBase64 = null; uploadLogoInstansiBase64 = null; loadAppConfig(); }); } 
+        else Swal.fire('Gagal', res.message, 'error'); 
+    }).saveAppConfig(data);
 }
 
 function updateAccount() {
@@ -2571,16 +2591,16 @@ function exportData(type) {
 // 🔍 PERBAIKAN FITUR FILTER TABEL (ANTI NGADAT)
 // ==========================================================
 
-// 1. Filter Buku
+// 1. Filter Buku (Presisi 100%)
 window.applyFilterBuku = function() {
     const tahun = document.getElementById('filterTahunExport').value.trim();
-    
-    // Kosongkan kotak search teks supaya nggak bentrok
     const searchBox = document.querySelector('#page-buku .custom-search input');
     if (searchBox) searchBox.value = '';
     
     bookPage = 1;
-    loadBooks(tahun); // Refresh tabel buku
+    // Kirim sandi 'exact_tahun:' ke server
+    const query = tahun ? "exact_tahun:" + tahun : "";
+    loadBooks(query); 
 };
 
 // 2. Ambil Kelas Otomatis dari Database
@@ -2599,21 +2619,18 @@ window.initDropdownKelas = function() {
     }).getAllDataForExport('anggota');
 };
 
-// 3. Filter Anggota (Ini yang tadi bikin emosi)
+// 3. Filter Anggota (Presisi 100%)
 window.applyFilterAnggota = function() {
     const kelas = document.getElementById('filterKelasExport').value.trim();
-    
-    // Kosongkan kotak search teks supaya nggak bentrok dengan dropdown
     const searchBox = document.querySelector('#page-anggota .custom-search input');
     if (searchBox) searchBox.value = '';
     
     memberPage = 1;
-    
-    // Tampilkan animasi loading sebentar biar kelihatan kalau dia lagi mikir
     document.getElementById('member-list-body').innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-success" role="status"></div><div class="mt-2 text-muted small">Menyaring Kelas...</div></td></tr>';
     
-    // Refresh tabel anggota sesuai kelas yang dipilih
-    loadMembers(kelas); 
+    // Kirim sandi 'exact_kelas:' ke server
+    const query = kelas ? "exact_kelas:" + kelas : "";
+    loadMembers(query); 
 };
 
 // ==========================================================
