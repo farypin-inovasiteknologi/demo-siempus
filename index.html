@@ -548,16 +548,35 @@ input, button, select, textarea {
 
             <div id="page-buku" class="page-section d-none">
                 <div class="glass-card p-4">
-                    <div class="d-flex flex-column flex-md-row justify-content-between mb-3 gap-2">
-                        <h5 class="fw-bold text-primary">Data Buku</h5>
-                        <div class="btn-group">
-    <button class="btn btn-info btn-sm text-white" onclick="printAllLabels()" title="Cetak Semua Barcode"><i class="fas fa-print"></i> Cetak Semua</button>
-    <button class="btn btn-success btn-sm" onclick="downloadTemplate('buku')" title="Download Template"><i class="fas fa-download"></i> Template Import</button>
-    <button class="btn btn-success btn-sm" onclick="triggerImport('buku')" title="Import Excel"><i class="fas fa-file-upload"></i> Import</button>
-    <button class="btn btn-secondary btn-sm" onclick="exportData('buku')" title="Export Data"><i class="fas fa-file-export"></i> Export</button>
-    <button class="btn btn-primary btn-sm" onclick="openBookModal()"><i class="fas fa-plus"></i> Data Baru</button>
-</div>
+                    <div class="d-flex flex-column gap-3 mb-4 w-100">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold text-primary mb-0">Data Buku</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success btn-sm shadow-sm fw-bold" onclick="openImportModal('buku')">
+                                    <i class="fas fa-file-upload"></i> Import Excel
+                                </button>
+                                <button class="btn btn-primary btn-sm shadow-sm fw-bold" onclick="openBookModal()">
+                                    <i class="fas fa-plus"></i> Tambah Buku
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-light p-2 rounded border gap-2">
+                            <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+                                <label class="small fw-bold text-muted mb-0"><i class="fas fa-filter"></i> Filter:</label>
+                                <input type="text" id="filterTahunExport" class="form-control form-control-sm" placeholder="Ketik Tahun (Kosong = Semua)" title="Ketik tahun pengadaan">
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-info btn-sm text-white shadow-sm fw-bold" onclick="printAllLabels()">
+                                    <i class="fas fa-print"></i> Cetak Semua
+                                </button>
+                                <button class="btn btn-secondary btn-sm shadow-sm fw-bold" onclick="exportData('buku')">
+                                    <i class="fas fa-file-export"></i> Export
+                                </button>
+                            </div>
+                        </div>
                     </div>
+      
                     <div class="table-responsive">
                         <table class="table table-hover mb-0 align-middle">
                             <thead class="table-light">
@@ -582,15 +601,33 @@ input, button, select, textarea {
 
             <div id="page-anggota" class="page-section d-none">
                 <div class="glass-card p-4">
-                    <div class="d-flex flex-column flex-md-row justify-content-between mb-3 gap-2">
-                        <h5 class="fw-bold text-primary">Data Anggota</h5>
-                        <div class="btn-group">
-    <button class="btn btn-info btn-sm text-white" onclick="printAllCards()" title="Cetak Semua Kartu"><i class="fas fa-print"></i> Cetak Semua</button>
-    <button class="btn btn-success btn-sm" onclick="downloadTemplate('anggota')" title="Download Template"><i class="fas fa-download"></i> Template Import</button>
-    <button class="btn btn-success btn-sm" onclick="triggerImport('anggota')" title="Import Excel"><i class="fas fa-file-upload"></i> Import</button>
-    <button class="btn btn-secondary btn-sm" onclick="exportData('anggota')" title="Export Data"><i class="fas fa-file-export"></i> Export</button>
-    <button class="btn btn-primary btn-sm" onclick="openMemberModal()"><i class="fas fa-plus"></i> Data Baru</button>
-</div>
+                    <div class="d-flex flex-column gap-3 mb-4 w-100">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold text-primary mb-0">Data Anggota</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success btn-sm shadow-sm fw-bold" onclick="openImportModal('anggota')">
+                                    <i class="fas fa-file-upload"></i> Import Excel
+                                </button>
+                                <button class="btn btn-primary btn-sm shadow-sm fw-bold" onclick="openMemberModal()">
+                                    <i class="fas fa-plus"></i> Tambah Anggota
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-light p-2 rounded border gap-2">
+                            <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+                                <label class="small fw-bold text-muted mb-0"><i class="fas fa-filter"></i> Filter:</label>
+                                <input type="text" id="filterKelasExport" class="form-control form-control-sm" placeholder="Ketik Kelas (Kosong = Semua)" title="Ketik nama kelas spesifik">
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-info btn-sm text-white shadow-sm fw-bold" onclick="printAllCards()">
+                                    <i class="fas fa-print"></i> Cetak Semua
+                                </button>
+                                <button class="btn btn-secondary btn-sm shadow-sm fw-bold" onclick="exportData('anggota')">
+                                    <i class="fas fa-file-export"></i> Export
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
@@ -772,6 +809,30 @@ input, button, select, textarea {
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalImport" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-file-excel me-2"></i>Import Data <span id="importTitle"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <i class="fas fa-cloud-upload-alt fa-4x text-success mb-3"></i>
+                    <p class="text-muted small mb-4">Pastikan format data di Excel sudah sesuai dengan template sebelum melakukan upload agar tidak terjadi error.</p>
+                    
+                    <div class="d-grid gap-3">
+                        <button class="btn btn-outline-success fw-bold py-2" onclick="downloadCurrentTemplate()">
+                            <i class="fas fa-download me-2"></i>1. Unduh Template Excel
+                        </button>
+                        <button class="btn btn-success fw-bold py-2 shadow-sm" onclick="triggerActualImport()">
+                            <i class="fas fa-upload me-2"></i>2. Upload File Excel (Import)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <div id="pwa-install-banner" class="shadow-lg bg-white" 
     style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 9999; border-radius: 20px 20px 0 0; padding: 15px 20px; padding-bottom: calc(15px + env(safe-area-inset-bottom)); transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: space-between;">
@@ -2067,6 +2128,12 @@ function printAllLabels() {
                 Swal.fire('Kosong', 'Belum ada data buku untuk dicetak.', 'info');
                 return;
             }
+            // FILTER TAHUN
+            const fTahun = document.getElementById('filterTahunExport').value.trim().toLowerCase();
+            if (fTahun && fTahun !== '') {
+                allBooks = allBooks.filter(b => String(b[4]).toLowerCase() === fTahun);
+            }
+            if (allBooks.length === 0) { Swal.fire('Kosong', 'Tidak ada buku di tahun tersebut.', 'info'); return; }
 
             // 3. Buat wadah sementara yang tersembunyi untuk membuat gambar QR Code
             const tempDiv = document.createElement('div');
@@ -2291,6 +2358,12 @@ function printAllCards() {
         .withFailureHandler(handleNetworkError)
         .withSuccessHandler(allMembers => {
             if (allMembers.length === 0) { Swal.fire('Kosong', 'Belum ada data anggota.', 'info'); return; }
+            // FILTER KELAS
+            const fKelas = document.getElementById('filterKelasExport').value.trim().toLowerCase();
+            if (fKelas && fKelas !== '') {
+                allMembers = allMembers.filter(m => String(m[2]).toLowerCase() === fKelas);
+            }
+            if (allMembers.length === 0) { Swal.fire('Kosong', 'Tidak ada siswa di kelas tersebut.', 'info'); return; }
 
             const tempDiv = document.createElement('div');
             tempDiv.style.position = 'absolute'; tempDiv.style.left = '-9999px';
@@ -2578,6 +2651,66 @@ function formatNISN() {
         // Tambahkan 0 di depan otomatis sampai pas 10 digit
         inputEl.value = val.padStart(10, '0');
     }
+}
+
+// --- LOGIKA MODAL IMPORT ---
+let currentImportTarget = '';
+function openImportModal(type) {
+    currentImportTarget = type;
+    document.getElementById('importTitle').innerText = type === 'buku' ? 'Buku' : 'Anggota';
+    new bootstrap.Modal(document.getElementById('modalImport')).show();
+}
+function downloadCurrentTemplate() {
+    downloadTemplate(currentImportTarget);
+}
+function triggerActualImport() {
+    bootstrap.Modal.getInstance(document.getElementById('modalImport')).hide();
+    triggerImport(currentImportTarget);
+}
+
+// --- UPDATE FUNGSI EXPORT (DENGAN FILTER) ---
+function exportData(type) {
+    showSmartLoading('Mempersiapkan Unduhan...', 'Menyaring data dari database.');
+    google.script.run
+        .withFailureHandler(handleNetworkError)
+        .withSuccessHandler(serverData => {
+            if (serverData.length === 0) { Swal.fire('Info', 'Belum ada data.', 'info'); return; }
+            
+            let targetData = serverData;
+            let headers = []; let fileName = "";
+            
+            // LOGIKA FILTER
+            if (type === 'buku') { 
+                headers = ["Kode Buku", "Judul", "Pengarang", "Penerbit", "Tahun", "Kategori", "Stok Total", "Stok Tersedia"]; 
+                fileName = "Data_Buku.xlsx"; 
+                
+                const fTahun = document.getElementById('filterTahunExport').value.trim().toLowerCase();
+                if (fTahun && fTahun !== '') {
+                    targetData = serverData.filter(b => String(b[4]).toLowerCase() === fTahun); // Kolom 4 = Tahun
+                    fileName = `Data_Buku_Tahun_${fTahun}.xlsx`;
+                }
+            } else { 
+                headers = ["ID/NISN", "Nama Lengkap", "Kelas", "Jenis Kelamin", "Tanggal Lahir", "No. HP"]; 
+                fileName = "Data_Anggota.xlsx"; 
+                
+                const fKelas = document.getElementById('filterKelasExport').value.trim().toLowerCase();
+                if (fKelas && fKelas !== '') {
+                    targetData = serverData.filter(m => String(m[2]).toLowerCase() === fKelas); // Kolom 2 = Kelas
+                    fileName = `Data_Anggota_Kelas_${fKelas}.xlsx`;
+                }
+            }
+            
+            if (targetData.length === 0) {
+                Swal.fire('Kosong', 'Tidak ada data yang cocok dengan filter tersebut.', 'info');
+                return;
+            }
+
+            const dataToExport = [headers, ...targetData]; 
+            const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(dataToExport); 
+            XLSX.utils.book_append_sheet(wb, ws, "Data Export"); 
+            XLSX.writeFile(wb, fileName);
+            Swal.close();
+    }).getAllDataForExport(type);
 }
 
 // ==========================================================
