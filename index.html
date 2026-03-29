@@ -562,19 +562,22 @@ input, button, select, textarea {
                         </div>
                         
                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-light p-2 rounded border gap-2">
-                            <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
-                                <label class="small fw-bold text-muted mb-0"><i class="fas fa-filter"></i> Filter:</label>
-                                <input type="text" id="filterTahunExport" class="form-control form-control-sm" placeholder="Ketik Tahun (Kosong = Semua)" title="Ketik tahun pengadaan">
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-info btn-sm text-white shadow-sm fw-bold" onclick="printAllLabels()">
-                                    <i class="fas fa-print"></i> Cetak Semua
-                                </button>
-                                <button class="btn btn-secondary btn-sm shadow-sm fw-bold" onclick="exportData('buku')">
-                                    <i class="fas fa-file-export"></i> Export
-                                </button>
-                            </div>
-                        </div>
+    <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+        <label class="small fw-bold text-muted mb-0"><i class="fas fa-filter"></i> Tahun:</label>
+        <div class="input-group input-group-sm" style="max-width: 250px;">
+            <input type="number" id="filterTahunExport" class="form-control" placeholder="Ketik Tahun">
+            <button class="btn btn-primary fw-bold" onclick="applyFilterBuku()"><i class="fas fa-search"></i> Terapkan</button>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-info btn-sm text-white shadow-sm fw-bold" onclick="printAllLabels()">
+            <i class="fas fa-print"></i> Cetak Semua
+        </button>
+        <button class="btn btn-secondary btn-sm shadow-sm fw-bold" onclick="exportData('buku')">
+            <i class="fas fa-file-export"></i> Export
+        </button>
+    </div>
+</div>
                     </div>
       
                     <div class="table-responsive">
@@ -615,19 +618,21 @@ input, button, select, textarea {
                         </div>
                         
                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-light p-2 rounded border gap-2">
-                            <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
-                                <label class="small fw-bold text-muted mb-0"><i class="fas fa-filter"></i> Filter:</label>
-                                <input type="text" id="filterKelasExport" class="form-control form-control-sm" placeholder="Ketik Kelas (Kosong = Semua)" title="Ketik nama kelas spesifik">
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-info btn-sm text-white shadow-sm fw-bold" onclick="printAllCards()">
-                                    <i class="fas fa-print"></i> Cetak Semua
-                                </button>
-                                <button class="btn btn-secondary btn-sm shadow-sm fw-bold" onclick="exportData('anggota')">
-                                    <i class="fas fa-file-export"></i> Export
-                                </button>
-                            </div>
-                        </div>
+    <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
+        <label class="small fw-bold text-muted mb-0"><i class="fas fa-filter"></i> Kelas:</label>
+        <select id="filterKelasExport" class="form-select form-select-sm" style="min-width: 150px;" onchange="applyFilterAnggota()">
+            <option value="">Memuat Kelas...</option>
+        </select>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-info btn-sm text-white shadow-sm fw-bold" onclick="printAllCards()">
+            <i class="fas fa-print"></i> Cetak Semua
+        </button>
+        <button class="btn btn-secondary btn-sm shadow-sm fw-bold" onclick="exportData('anggota')">
+            <i class="fas fa-file-export"></i> Export
+        </button>
+    </div>
+</div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
@@ -1201,7 +1206,8 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Memuat Pengaturan dari Database
     loadAppConfig();
-    
+    initDropdownKelas();
+
     const toggleBtn = document.getElementById('btn-toggle-menu');
     if(toggleBtn){
         toggleBtn.onclick = () => { 
@@ -2559,6 +2565,40 @@ function exportData(type) {
             XLSX.writeFile(wb, fileName);
             Swal.close();
     }).getAllDataForExport(type);
+}
+
+// ==========================================================
+// 🔍 FITUR FILTER TABEL DINAMIS (BUKU & ANGGOTA)
+// ==========================================================
+
+// 1. Eksekusi Filter Buku (Pencarian Tabel)
+function applyFilterBuku() {
+    const tahun = document.getElementById('filterTahunExport').value.trim();
+    bookPage = 1;
+    loadBooks(tahun); // Mengirim kata kunci tahun ke server untuk filter tabel
+}
+
+// 2. Ambil Daftar Kelas Otomatis dari Database untuk Dropdown
+function initDropdownKelas() {
+    google.script.run.withSuccessHandler(data => {
+        const select = document.getElementById('filterKelasExport');
+        if(!select) return;
+        
+        // Ambil data unik dari kolom ke-2 (Kelas), buang yang kosong, lalu urutkan
+        const uniqueKelas = [...new Set(data.map(item => String(item[2]).trim()))].filter(Boolean).sort();
+        
+        select.innerHTML = '<option value="">-- Semua Kelas --</option>';
+        uniqueKelas.forEach(k => {
+            select.innerHTML += `<option value="${k}">${k}</option>`;
+        });
+    }).getAllDataForExport('anggota');
+}
+
+// 3. Eksekusi Filter Anggota saat Dropdown dipilih
+function applyFilterAnggota() {
+    const kelas = document.getElementById('filterKelasExport').value.trim();
+    memberPage = 1;
+    loadMembers(kelas); // Tabel akan langsung berubah otomatis sesuai kelas
 }
 
 // ==========================================================
