@@ -2568,23 +2568,28 @@ function exportData(type) {
 }
 
 // ==========================================================
-// 🔍 FITUR FILTER TABEL DINAMIS (BUKU & ANGGOTA)
+// 🔍 PERBAIKAN FITUR FILTER TABEL (ANTI NGADAT)
 // ==========================================================
 
-// 1. Eksekusi Filter Buku (Pencarian Tabel)
-function applyFilterBuku() {
+// 1. Filter Buku
+window.applyFilterBuku = function() {
     const tahun = document.getElementById('filterTahunExport').value.trim();
+    
+    // Kosongkan kotak search teks supaya nggak bentrok
+    const searchBox = document.querySelector('#page-buku .custom-search input');
+    if (searchBox) searchBox.value = '';
+    
     bookPage = 1;
-    loadBooks(tahun); // Mengirim kata kunci tahun ke server untuk filter tabel
-}
+    loadBooks(tahun); // Refresh tabel buku
+};
 
-// 2. Ambil Daftar Kelas Otomatis dari Database untuk Dropdown
-function initDropdownKelas() {
+// 2. Ambil Kelas Otomatis dari Database
+window.initDropdownKelas = function() {
     google.script.run.withSuccessHandler(data => {
         const select = document.getElementById('filterKelasExport');
         if(!select) return;
         
-        // Ambil data unik dari kolom ke-2 (Kelas), buang yang kosong, lalu urutkan
+        // Ambil data kelas dari kolom ke-2, saring yang kosong, urutkan A-Z
         const uniqueKelas = [...new Set(data.map(item => String(item[2]).trim()))].filter(Boolean).sort();
         
         select.innerHTML = '<option value="">-- Semua Kelas --</option>';
@@ -2592,14 +2597,24 @@ function initDropdownKelas() {
             select.innerHTML += `<option value="${k}">${k}</option>`;
         });
     }).getAllDataForExport('anggota');
-}
+};
 
-// 3. Eksekusi Filter Anggota saat Dropdown dipilih
-function applyFilterAnggota() {
+// 3. Filter Anggota (Ini yang tadi bikin emosi)
+window.applyFilterAnggota = function() {
     const kelas = document.getElementById('filterKelasExport').value.trim();
+    
+    // Kosongkan kotak search teks supaya nggak bentrok dengan dropdown
+    const searchBox = document.querySelector('#page-anggota .custom-search input');
+    if (searchBox) searchBox.value = '';
+    
     memberPage = 1;
-    loadMembers(kelas); // Tabel akan langsung berubah otomatis sesuai kelas
-}
+    
+    // Tampilkan animasi loading sebentar biar kelihatan kalau dia lagi mikir
+    document.getElementById('member-list-body').innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-success" role="status"></div><div class="mt-2 text-muted small">Menyaring Kelas...</div></td></tr>';
+    
+    // Refresh tabel anggota sesuai kelas yang dipilih
+    loadMembers(kelas); 
+};
 
 // ==========================================================
 // 📲 LOGIKA BANNER INSTALL PWA PROFESIONAL
