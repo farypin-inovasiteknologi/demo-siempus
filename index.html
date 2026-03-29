@@ -1937,23 +1937,6 @@ function processImport(i){
     }; r.readAsArrayBuffer(f);
 }
 
-function exportData(type) {
-    showSmartLoading('Mempersiapkan Unduhan...', 'Mengumpulkan ribuan baris data dari database.');
-    google.script.run
-        .withFailureHandler(handleNetworkError)
-        .withSuccessHandler(serverData => {
-            if (serverData.length === 0) { Swal.fire('Info', 'Belum ada data untuk diexport.', 'info'); return; }
-            let headers = []; let fileName = "";
-            if (type === 'buku') { headers = ["Kode Buku", "Judul", "Pengarang", "Penerbit", "Tahun", "Kategori", "Stok Total", "Stok Tersedia"]; fileName = "Data_Semua_Buku.xlsx"; } 
-            else { headers = ["ID/NISN", "Nama Lengkap", "Kelas", "Jenis Kelamin", "Tanggal Lahir", "No. HP"]; fileName = "Data_Semua_Anggota.xlsx"; }
-            const dataToExport = [headers, ...serverData]; 
-            const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(dataToExport); 
-            XLSX.utils.book_append_sheet(wb, ws, "Data Export"); 
-            XLSX.writeFile(wb, fileName);
-            Swal.close();
-    }).getAllDataForExport(type);
-}
-
 function printLabel(kode, judul) {
     const htmlPreview = '<div style="display:flex;justify-content:center;padding:10px;"><div class="book-label-preview" style="width:250px;height:150px;background:#fff;border:2px solid #333;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;"><div style="font-weight:bold;font-size:14px;margin-bottom:5px;line-height:1.2;max-height:40px;overflow:hidden;">' + judul + '</div><div style="font-size:12px;margin-top:5px;background:#000;color:#fff;padding:2px 8px;border-radius:4px;">' + kode + '</div><div id="qrcode-book" style="margin-top:10px;"></div></div></div>';
     
@@ -2115,148 +2098,6 @@ loadAppConfig = function() {
     }).getAppConfig();
 };
 
-// --- FITUR CETAK SEMUA BARCODE BUKU (A4 3x3) ---
-function printAllLabels() {
-    // 1. Tampilkan loading agar pengguna tahu sistem sedang memproses
-    showSmartLoading('Menyiapkan Barcode...', 'Mengambil semua data buku dan menyusun layout kertas A4.');
-
-    // 2. Panggil fungsi di GAS untuk ambil SEMUA data buku
-    google.script.run
-        .withFailureHandler(handleNetworkError)
-        .withSuccessHandler(allBooks => {
-            if (allBooks.length === 0) {
-                Swal.fire('Kosong', 'Belum ada data buku untuk dicetak.', 'info');
-                return;
-            }
-            // FILTER TAHUN
-            const fTahun = document.getElementById('filterTahunExport').value.trim().toLowerCase();
-            if (fTahun && fTahun !== '') {
-                allBooks = allBooks.filter(b => String(b[4]).toLowerCase() === fTahun);
-            }
-            if (allBooks.length === 0) { Swal.fire('Kosong', 'Tidak ada buku di tahun tersebut.', 'info'); return; }
-
-            // 3. Buat wadah sementara yang tersembunyi untuk membuat gambar QR Code
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            document.body.appendChild(tempDiv);
-
-            let htmlContent = `<div class="print-page">`;
-
-            // 4. Looping semua buku untuk membuat kotak-kotaknya
-            allBooks.forEach((b, index) => {
-                const kode = b[0]; // Kolom A: Kode Buku
-                const judul = b[1]; // Kolom B: Judul Buku
-
-                // Jika sudah 9 kotak, tutup halaman dan buat halaman baru
-                if (index > 0 && index % 9 === 0) {
-                    htmlContent += `</div><div class="print-page" style="page-break-before: always;">`;
-                }
-
-                // Desain per 1 kotak buku
-                htmlContent += `
-                    <div class="label-box">
-                        <div class="label-title">${judul}</div>
-                        <div class="label-kode">${kode}</div>
-                        <div id="qr-batch-${index}" class="qr-container"></div>
-                    </div>
-                `;
-            });
-            htmlContent += `</div>`;
-            tempDiv.innerHTML = htmlContent;
-
-            // 5. Generate QR Code ke dalam kotak masing-masing
-            allBooks.forEach((b, index) => {
-                new QRCode(document.getElementById(`qr-batch-${index}`), {
-                    text: b[0],
-                    width: 90,
-                    height: 90
-                });
-            });
-
-            // 6. Beri waktu 1 detik agar QR Code selesai digambar, lalu cetak
-            setTimeout(() => {
-                // Konversi canvas QrCode ke Gambar (agar tidak hilang saat di-print)
-                allBooks.forEach((b, index) => {
-                    const qrBox = document.getElementById(`qr-batch-${index}`);
-                    if (qrBox) {
-                        const canvas = qrBox.querySelector('canvas');
-                        const img = qrBox.querySelector('img');
-                        if (canvas && img) {
-                            img.src = canvas.toDataURL("image/png");
-                            img.style.display = "block";
-                            canvas.style.display = "none";
-                        }
-                    }
-                });
-
-                // 7. Buka jendela Print baru dengan CSS khusus A4 3x3
-                const printWindow = window.open('', '', 'height=800,width=1000');
-                const css = `
-                    <style>
-                        @page { size: A4; margin: 10mm; }
-                        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background: #fff; }
-                        .print-page {
-                            display: grid;
-                            grid-template-columns: repeat(3, 1fr);
-                            grid-template-rows: repeat(3, 1fr);
-                            gap: 10px;
-                            width: 190mm;  /* Lebar A4 dikurangi margin */
-                            height: 277mm; /* Tinggi A4 dikurangi margin */
-                            box-sizing: border-box;
-                        }
-                        .label-box {
-                            border: 2px solid #333;
-                            border-radius: 8px;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                            text-align: center;
-                            padding: 10px;
-                            box-sizing: border-box;
-                            background: #fff;
-                            height: 100%;
-                        }
-                        .label-title {
-                            font-weight: bold;
-                            font-size: 13px;
-                            margin-bottom: 8px;
-                            max-height: 38px;
-                            overflow: hidden;
-                            line-height: 1.2;
-                        }
-                        .label-kode {
-                            background: #000;
-                            color: #fff;
-                            padding: 4px 10px;
-                            border-radius: 4px;
-                            font-size: 14px;
-                            font-weight: bold;
-                            margin-bottom: 12px;
-                            letter-spacing: 1px;
-                        }
-                        .qr-container img { margin: 0 auto; display: block; }
-                    </style>
-                `;
-
-                printWindow.document.write('<html><head><title>Cetak Semua Label Buku</title>' + css + '</head><body>');
-                printWindow.document.write(tempDiv.innerHTML);
-                printWindow.document.write('</body></html>');
-                printWindow.document.close();
-
-                // Bersihkan sistem
-                document.body.removeChild(tempDiv);
-                Swal.close();
-
-                // Panggil perintah print
-                setTimeout(() => { printWindow.print(); }, 500);
-
-            }, 1000); 
-
-        }).getAllDataForExport('buku'); // Kita memanfaatkan fungsi eksport yang sudah ada di Code.gs!
-}
-
 // ==========================================================
 // 1. FITUR CETAK SEMUA BARCODE BUKU (A4 3x3 + LOGO & QR BESAR)
 // ==========================================================
@@ -2267,6 +2108,13 @@ function printAllLabels() {
         .withFailureHandler(handleNetworkError)
         .withSuccessHandler(allBooks => {
             if (allBooks.length === 0) { Swal.fire('Kosong', 'Belum ada data buku untuk dicetak.', 'info'); return; }
+
+            // FILTER TAHUN
+            const fTahun = document.getElementById('filterTahunExport').value.trim().toLowerCase();
+            if (fTahun && fTahun !== '') {
+                allBooks = allBooks.filter(b => String(b[4]).toLowerCase() === fTahun);
+            }
+            if (allBooks.length === 0) { Swal.fire('Kosong', 'Tidak ada buku di tahun tersebut.', 'info'); return; }
 
             const tempDiv = document.createElement('div');
             tempDiv.style.position = 'absolute'; tempDiv.style.left = '-9999px';
