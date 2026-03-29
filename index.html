@@ -5,9 +5,19 @@
     <base target="_top">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Demo SiE-MPuS</title>
+    <title>Demo SiE-MPuS + AI</title>
     <link rel="icon" type="image/png" href="./imgsiempus.png">
     
+
+    <meta name="theme-color" content="#4361ee">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SiE-MPuS">
+    <link rel="apple-touch-icon" href="./imgsiempus.png">
+
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -294,9 +304,7 @@ input, button, select, textarea {
     </div>
 
     <div class="text-muted text-end" style="font-size: 11px;">
-       Created by : <a href='https://www.fary-edtech.my.id' rel='dofollow' class="fw-bold" style='color:blue; text-decoration:none;'>Fary EdTech</a>
-       <br>
-       <span style="font-size: 5px;">Using Gemini AI</span>
+       Powered by : <a href='https://www.farypin-inovasiteknologi.com' rel='dofollow' class="fw-bold" style='color:blue; text-decoration:none;'>PT Farypin Inovasi Teknologi</a>
     </div>
   </div>
 </footer>
@@ -620,9 +628,7 @@ input, button, select, textarea {
     </div>
 
     <div class="text-muted text-end" style="font-size: 11px;">
-       Created by : <a href='https://www.fary-edtech.my.id' rel='dofollow' class="fw-bold" style='color:blue; text-decoration:none;'>Fary EdTech</a>
-       <br>
-       <span style="font-size: 5px;">Using Gemini AI</span>
+       Powered by : <a href='https://www.farypin-inovasiteknologi.com' rel='dofollow' class="fw-bold" style='color:blue; text-decoration:none;'>PT Farypin Inovasi Teknologi</a>
     </div>
   </div>
 </footer>
@@ -696,7 +702,7 @@ input, button, select, textarea {
                 </div>
                 <div class="modal-body">
                     <form id="formAnggota">
-                        <div class="mb-2"><label for="mId">ID/NISN</label><input type="text" class="form-control" id="mId" required></div>
+                        <div class="mb-2"><label for="mId">ID/NISN</label> <input type="text" class="form-control" id="mId" onblur="formatNISN()" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="10" required></div>
                         <div class="mb-2"><label for="mNama">Nama</label><input type="text" class="form-control" id="mNama" required></div>
                         <div class="row mb-2">
                             <div class="col-6"><label for="mKelas">Kelas</label><input type="text" class="form-control" id="mKelas" required></div>
@@ -743,7 +749,7 @@ input, button, select, textarea {
   </div>
 </div>
 
-<button id="btn-ai-chat" class="btn btn-primary text-white d-none" onclick="toggleAIChat()" style="position: fixed; bottom: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; z-index: 1050; box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);">
+<button id="btn-ai-chat" class="btn btn-primary text-white d-none" onclick="toggleAIChat()" style="position: fixed; bottom: 85px; left: 20px; width: 50px; height: 50px; border-radius: 50%; z-index: 1050; box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);">
     <i class="fas fa-robot fa-lg"></i>
 </button>
 
@@ -767,6 +773,27 @@ input, button, select, textarea {
     </div>
 </div>
 
+<div id="pwa-install-banner" class="shadow-lg bg-white" 
+    style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 9999; border-radius: 20px 20px 0 0; padding: 15px 20px; padding-bottom: calc(15px + env(safe-area-inset-bottom)); transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: space-between;">
+    
+    <div class="d-flex align-items-center gap-3">
+        <img id="pwa-banner-logo" src="./imgsiempus.png" alt="Logo" 
+            style="width: 45px; height: 45px; border-radius: 12px; object-fit: contain; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div>
+            <h6 id="pwa-banner-title" class="mb-0 fw-bold text-dark" style="font-size: 14px;">SiE-MPuS</h6>
+            <small class="text-muted" style="font-size: 11px;">Akses lebih cepat di layar utama</small>
+        </div>
+    </div>
+    
+    <div class="d-flex align-items-center gap-2">
+        <button id="btn-pwa-install" class="btn btn-primary btn-sm fw-bold rounded-pill px-3 shadow-sm">Install</button>
+        <button id="btn-pwa-close" class="btn btn-light btn-sm rounded-circle text-muted" 
+            style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -782,12 +809,51 @@ const myButton = document.getElementById("btn-back-to-top");
     if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) { myButton.style.display = "block"; } else { myButton.style.display = "none"; }
   }
   function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
- /* ========================================================
-   ADAPTOR AJAIB (PROXY GOOGLE SCRIPT UNTUK GITHUB)
+
+
+/* ========================================================
+   ADAPTOR MULTI-TENANT (1 FRONTEND, BANYAK BACKEND)
 ======================================================== */
 
-// PASTE URL WEB APP GOOGLE SCRIPT-MU DI BAWAH INI:
-const API_URL = "https://script.google.com/a/macros/admin.sma.belajar.id/s/AKfycbzApkGjh7Q8NzfwePHiAc2Np9y8_8OcesNHiV4pCAMpJ56ua5R1HhAdSvN0MlqlXnXR/exec";
+// 1. Buat "Buku Telepon" yang berisi daftar sekolah dan link Backend-nya masing-masing
+const daftarSekolah = {
+    "sman": "https://script.google.com/macros/s/EXEC",
+    "demo": "https://script.google.com/macros/s/AKfycbxgt5Zx8mLArPu0WvywbL51WHniqyQPi_p5gFYhZqkAIJPWgvgHzQsJIu_H0GBjF3JX/exec"
+};
+
+// 2. Baca parameter ?id= dari URL browser
+const urlParams = new URLSearchParams(window.location.search);
+let tenantId = urlParams.get('id');
+
+// 3. Jika pengguna tidak mengetik ?id= di URL, coba ingat ID terakhir dari memori browser
+if (!tenantId) {
+    tenantId = localStorage.getItem('siempus_tenant_id') || "demo"; // Default ke 'demo' jika kosong
+}
+
+// 4. Keamanan: Jika pengguna ganti URL sekolah (pindah sekolah), logout otomatis akun sebelumnya
+const savedTenant = localStorage.getItem('siempus_tenant_id');
+if (savedTenant && savedTenant !== tenantId) {
+    localStorage.removeItem('siempus_user');
+    localStorage.removeItem('siempus_username');
+    localStorage.removeItem('siempus_page');
+}
+
+// Simpan ID sekolah saat ini ke ingatan browser
+localStorage.setItem('siempus_tenant_id', tenantId);
+
+// 5. Tentukan API URL berdasarkan ID. Jika ID ngawur, kembalikan ke default 'demo'
+let API_URL = daftarSekolah[tenantId];
+if (!API_URL) {
+    console.warn("Kode sekolah tidak terdaftar! Menggunakan server demo.");
+    tenantId = "demo";
+    API_URL = daftarSekolah["demo"];
+    localStorage.setItem('siempus_tenant_id', tenantId);
+}
+
+// (Opsional) Rapikan URL di browser agar selalu terlihat ?id=namasekolah
+if (!window.location.search.includes('id=')) {
+    window.history.replaceState(null, null, "?id=" + tenantId);
+}
 
 function apiHelper() {
     let successCb = null;
@@ -2493,7 +2559,192 @@ document.getElementById('ai-chat-input')?.addEventListener("keypress", function(
     if (event.key === "Enter") { event.preventDefault(); sendAIChat(); } 
 });
 
+// FITUR AUTO-LENGKAPI NISN 10 DIGIT
+function formatNISN() {
+    const inputEl = document.getElementById('mId');
+    let val = inputEl.value.trim();
+    
+    // Jika input tidak kosong dan kurang dari 10 digit
+    if (val !== "" && val.length < 10) {
+        // Tampilkan peringatan
+        Swal.fire({
+            icon: 'info',
+            title: 'Format NISN Disesuaikan',
+            text: `NISN wajib 10 digit. Sistem otomatis menambahkan angka 0 di depan data Anda.`,
+            timer: 3500, // Hilang otomatis dalam 3.5 detik
+            showConfirmButton: false
+        });
+        
+        // Tambahkan 0 di depan otomatis sampai pas 10 digit
+        inputEl.value = val.padStart(10, '0');
+    }
+}
 
+// ==========================================================
+// 📲 LOGIKA BANNER INSTALL PWA PROFESIONAL
+// ==========================================================
+let deferredPrompt;
+
+// 1. Tangkap izin instalasi dari browser
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Mencegah popup default browser (mini-infobar)
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Cek apakah user sebelumnya sudah menutup banner ini
+    if (sessionStorage.getItem('pwa_banner_closed')) {
+        return; // Jika sudah pernah ditutup, jangan tampilkan lagi
+    }
+
+    // Update teks banner sesuai ID tenant/sekolah saat ini
+    const urlParamsPWA = new URLSearchParams(window.location.search);
+    let tenantIdPWA = urlParamsPWA.get('id') || localStorage.getItem('siempus_tenant_id') || 'Demo';
+    
+    document.getElementById('pwa-banner-title').innerText = "SiE-MPuS " + tenantIdPWA.toUpperCase();
+    
+    // Update logo jika logo sekolah sudah diload dari backend
+    if (typeof globalLogoUrl !== 'undefined' && globalLogoUrl !== '') {
+        document.getElementById('pwa-banner-logo').src = globalLogoUrl;
+    }
+
+    // Munculkan banner dengan animasi meluncur dari bawah
+    setTimeout(() => {
+        const banner = document.getElementById('pwa-install-banner');
+        if(banner) banner.style.transform = 'translateY(0)';
+    }, 1500); // Tunda 1.5 detik biar aplikasinya loading dulu
+});
+
+// 2. Aksi jika tombol "Install" diklik
+document.getElementById('btn-pwa-install').addEventListener('click', async () => {
+    if (deferredPrompt) {
+        // Panggil sistem popup install Android/Browser
+        deferredPrompt.prompt();
+        
+        // Tunggu respon user
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            console.log('User menginstal aplikasi');
+        }
+        
+        // Sembunyikan banner ke bawah
+        document.getElementById('pwa-install-banner').style.transform = 'translateY(150%)';
+        deferredPrompt = null;
+    }
+});
+
+// 3. Aksi jika tombol "X" (Tutup) diklik
+document.getElementById('btn-pwa-close').addEventListener('click', () => {
+    // Sembunyikan banner
+    document.getElementById('pwa-install-banner').style.transform = 'translateY(150%)';
+    
+    // Simpan ingatan ke browser agar tidak muncul lagi saat pindah halaman
+    sessionStorage.setItem('pwa_banner_closed', 'true');
+});
+
+// 4. Deteksi jika aplikasi sudah sukses terinstal
+window.addEventListener('appinstalled', () => {
+    // Sembunyikan banner permanen
+    document.getElementById('pwa-install-banner').style.transform = 'translateY(150%)';
+    
+    // Tampilkan notifikasi sukses
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Aplikasi berhasil ditambahkan ke Layar Utama!',
+        showConfirmButton: false,
+        timer: 3000
+    });
+});
+
+
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Ambil ID Tenant (Sekolah) dari URL atau LocalStorage
+    const urlParamsPWA = new URLSearchParams(window.location.search);
+    let tenantIdPWA = urlParamsPWA.get('id') || localStorage.getItem('siempus_tenant_id') || 'demo';
+
+    // 2. Buat Manifest secara Dinamis (Lengkap & Profesional)
+    const dynamicManifest = {
+        "name": "SiE-MPuS - " + tenantIdPWA.toUpperCase(),
+        "short_name": "SiE-MPuS",
+        "description": "Sistem E-Manajemen Perpustakaan Sekolah",
+        "start_url": window.location.pathname + "?id=" + tenantIdPWA,
+        "display": "standalone",
+        "background_color": "#f0f2f5",
+        "theme_color": "#4361ee",
+        "orientation": "portrait-primary",
+        "icons": [
+            {
+                "src": "./imgsiempus.png",
+                "sizes": "72x72",
+                "type": "image/png"
+            },
+            {
+                "src": "./imgsiempus.png",
+                "sizes": "96x96",
+                "type": "image/png"
+            },
+            {
+                "src": "./imgsiempus.png",
+                "sizes": "128x128",
+                "type": "image/png"
+            },
+            {
+                "src": "./imgsiempus.png",
+                "sizes": "144x144",
+                "type": "image/png"
+            },
+            {
+                "src": "./imgsiempus.png",
+                "sizes": "152x152",
+                "type": "image/png"
+            },
+            {
+                "src": "./imgsiempus.png",
+                "sizes": "192x192",
+                "type": "image/png",
+                "purpose": "any maskable"
+            },
+            {
+                "src": "./imgsiempus.png",
+                "sizes": "384x384",
+                "type": "image/png"
+            },
+            {
+                "src": "./imgsiempus.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any maskable"
+            }
+        ]
+    };
+
+    // 3. Ubah objek JSON menjadi File Virtual agar terbaca PWABuilder
+    const manifestBlob = new Blob([JSON.stringify(dynamicManifest)], { type: 'application/json' });
+    const manifestUrl = URL.createObjectURL(manifestBlob);
+
+    // 4. Suntikkan ke dalam tag <head>
+    const manifestLink = document.createElement('link');
+    manifestLink.rel = 'manifest';
+    manifestLink.href = manifestUrl;
+    document.head.appendChild(manifestLink);
+
+    // 5. Daftarkan Service Worker (sw.js)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('PWA: Service Worker Aktif!', registration.scope);
+                })
+                .catch(err => {
+                    console.log('PWA: Gagal mendaftarkan Service Worker:', err);
+                });
+        });
+    }
+});
 </script>
 
   </body>
