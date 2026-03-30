@@ -114,6 +114,23 @@ input, button, select, textarea {
       .nav-link.active { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3); }
       
       .glass-card { background: white; border-radius: 16px; border: none; box-shadow: var(--shadow-soft); margin-bottom: 20px; }
+
+      /* Mencegah kolom tombol dan tanggal terlipat/turun ke bawah */
+.nowrap-cell {
+    white-space: nowrap !important;
+    width: 1%; /* Biar lebar kolomnya menyesuaikan isinya aja */
+}
+
+/* Memotong teks panjang maksimal 2 baris dengan titik-titik (...) */
+.text-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px; /* Lebar kira-kira 20 digit huruf */
+    white-space: normal;
+}
       
       @media (max-width: 768px) {
         .sidebar { left: -260px; } 
@@ -233,6 +250,42 @@ input, button, select, textarea {
     .mobile-header, .mobile-bottom-nav { display: none !important; }
 }
 
+
+/* --- EFEK GLASSMORPHISM & ANIMASI MELAYANG --- */
+      .glass-morphism-card {
+          background: rgba(255, 255, 255, 0.55) !important; /* Dibuat lebih transparan biar efek kacanya terasa */
+          backdrop-filter: blur(25px) saturate(150%) !important; 
+          -webkit-backdrop-filter: blur(25px) saturate(150%) !important;
+          border: 1px solid rgba(255, 255, 255, 0.7) !important;
+      }
+      
+      /* Bola Cahaya Warna-warni di Belakang Kaca */
+      .color-blob {
+          position: absolute;
+          filter: blur(80px);
+          z-index: 0;
+          border-radius: 50%;
+          animation: blob-bounce 10s infinite alternate ease-in-out;
+      }
+      .blob-biru { width: 350px; height: 350px; background: #4361ee; top: -50px; left: -50px; opacity: 0.6; }
+      .blob-pink { width: 300px; height: 300px; background: #f72585; bottom: -50px; right: -50px; opacity: 0.5; animation-delay: -4s; }
+      
+      @keyframes blob-bounce {
+          0% { transform: translate(0, 0) scale(1); }
+          100% { transform: translate(50px, 50px) scale(1.2); }
+      }
+
+      /* Animasi Logo Melayang (Beda durasi biar geraknya gak kaku barengan) */
+      .anim-float-1 { animation: float 3s ease-in-out infinite; }
+      .anim-float-2 { animation: float 4s ease-in-out infinite; animation-delay: 1.5s; }
+
+      /* Animasi Tombol HP Melayang & Berdenyut */
+      @keyframes pulse-float {
+          0% { transform: translateY(0) scale(1); box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3); }
+          50% { transform: translateY(-8px) scale(1.03); box-shadow: 0 15px 25px rgba(67, 97, 238, 0.6); }
+          100% { transform: translateY(0) scale(1); box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3); }
+      }
+      .btn-float-mobile { animation: pulse-float 2.5s infinite ease-in-out; }
   </style>
     
   </head>
@@ -241,34 +294,38 @@ input, button, select, textarea {
     <div id="overlay" class="overlay"></div>
 
    
-  <div id="login-app" class="d-none align-items-center justify-content-center vh-100" style="background-size: cover; background-position: center; transition: background 0.5s ease-in-out;">
-      <div class="card login-card shadow-lg border-0 p-0" style="max-width: 900px; width: 95%; border-radius: 20px; overflow: hidden; background: rgba(255,255,255,0.85); backdrop-filter: blur(15px);">
+  <div id="login-app" class="d-none align-items-center justify-content-center vh-100 position-relative overflow-hidden" style="background-size: cover; background-position: center; transition: background 0.5s ease-in-out; z-index: 1;">
+      
+      <div class="color-blob blob-biru"></div>
+      <div class="color-blob blob-pink"></div>
+
+      <div class="card login-card glass-morphism-card shadow-lg p-0" style="max-width: 900px; width: 95%; border-radius: 20px; overflow: hidden; z-index: 2;">
         <div class="row g-0" style="min-height: 550px;">
           
-          <div class="col-md-6 d-flex flex-column justify-content-between p-4 p-md-5 text-center bg-white bg-opacity-75 position-relative" id="panel-left-mobile">
+          <div class="col-md-6 d-flex flex-column justify-content-between p-4 p-md-5 text-center bg-white bg-opacity-50 position-relative" id="panel-left-mobile">
             <div>
               <div class="d-flex justify-content-center align-items-center gap-3 mb-3 mt-3 mt-md-0">
-                  <img id="login-logo-instansi" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" style="width:70px; height:70px; object-fit:contain;" crossorigin="anonymous">
-                  <img id="login-logo-sekolah" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" style="width:80px; height:80px; object-fit:contain;" crossorigin="anonymous">
+                  <img id="login-logo-instansi" class="anim-float-1" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" style="width:70px; height:70px; object-fit:contain;" crossorigin="anonymous">
+                  <img id="login-logo-sekolah" class="anim-float-2" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" style="width:80px; height:80px; object-fit:contain;" crossorigin="anonymous">
               </div>
-              <h5 class="fw-bold mb-0 text-dark text-uppercase" id="login-instansi-name">INSTANSI......</h5>
-              <h4 class="fw-bold text-primary mb-2 text-uppercase" id="login-school-name">NAMA SEKOLAH.....</h4>
-              <p class="small text-muted mb-4 px-2" id="login-alamat-text">Alamat sekolah...</p>
+              <h5 class="fw-bold mb-0 text-dark text-uppercase" id="login-instansi-name">DINAS PENDIDIKAN</h5>
+              <h4 class="fw-bold text-primary mb-2 text-uppercase" id="login-school-name">NAMA SEKOLAH</h4>
+              <p class="small text-muted mb-4 px-2" id="login-alamat-text">Alamat sekolah akan tampil di sini...</p>
               
               <hr class="w-50 mx-auto border-secondary opacity-25">
               
               <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s80/Logo%20SiE-MPus%20baru%20ok.png" style="width:45px; margin-bottom:5px;">
-              <h5 class="text-secondary mb-1">Sistem E-Manajemen Perpustakaan Sekolah</h5> <br>
+              <h5 class="text-secondary mb-1">Sistem E-Manajemen Perpustakaan Sekolah</h5>
               <h6 class="text-secondary mb-1">Dilengkapi Fitur AI</h6>
+              
+              <div class="marquee-container small fw-bold text-primary mb-3">
+                <div id="login-running-text" class="marquee-content">Sistem E-Manajemen Perpustakaan Sekolah Terpadu.</div>
+              </div>
             </div>
             
-            <button class="btn btn-primary rounded-pill fw-bold shadow-lg d-md-none mb-4 py-3 text-uppercase" onclick="switchLoginPanel('right')" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); letter-spacing: 1px;">
+            <button class="btn btn-primary btn-float-mobile rounded-pill fw-bold shadow-lg d-md-none mb-4 py-3 text-uppercase" onclick="switchLoginPanel('right')" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); letter-spacing: 1px;">
               Masuk Aplikasi <i class="fas fa-arrow-right ms-2"></i>
             </button>
-
-               <div class="marquee-container small fw-bold text-primary mb-3">
-                <div id="login-running-text" class="marquee-content">Sistem E-Manajemen Perpustakaan Sekolah.</div>
-              </div>
 
             <footer class="small text-muted mt-auto">
               <span id="login-footer-text" class="d-block fw-bold mb-1">© 2026 SiE-MPuS</span>
@@ -276,7 +333,7 @@ input, button, select, textarea {
             </footer>
           </div>
 
-          <div class="col-md-6 d-none d-md-flex flex-column justify-content-center p-4 p-md-5 bg-white shadow-sm" id="panel-right-mobile">
+          <div class="col-md-6 d-none d-md-flex flex-column justify-content-center p-4 p-md-5 bg-white bg-opacity-75 shadow-sm" id="panel-right-mobile">
             <button class="btn btn-light btn-sm text-start mb-4 d-md-none fw-bold text-secondary border shadow-sm rounded-pill px-3 align-self-start" onclick="switchLoginPanel('left')">
               <i class="fas fa-arrow-left me-2"></i> Kembali
             </button>
@@ -290,32 +347,32 @@ input, button, select, textarea {
             <form id="loginForm" onsubmit="event.preventDefault(); attemptLogin();">
               <div class="mb-3">
                   <label class="form-label small fw-bold text-muted">Username</label>
-                  <div class="input-group">
-                      <span class="input-group-text bg-light border-end-0"><i class="fas fa-user text-primary"></i></span>
-                      <input type="text" class="form-control border-start-0 bg-light" id="uName" placeholder="Ketik username..." required>
+                  <div class="input-group shadow-sm rounded">
+                      <span class="input-group-text bg-white border-end-0"><i class="fas fa-user text-primary"></i></span>
+                      <input type="text" class="form-control border-start-0 bg-white" id="uName" placeholder="Ketik username..." required>
                   </div>
               </div>
               <div class="mb-4">
                   <label class="form-label small fw-bold text-muted">Password</label>
-                  <div class="input-group">
-                      <span class="input-group-text bg-light border-end-0"><i class="fas fa-lock text-primary"></i></span>
-                      <input type="password" class="form-control border-start-0 border-end-0 bg-light" id="uPass" placeholder="Ketik password..." required>
-                      <button class="btn btn-light border border-start-0 text-muted bg-light" type="button" onclick="togglePassword()">
+                  <div class="input-group shadow-sm rounded">
+                      <span class="input-group-text bg-white border-end-0"><i class="fas fa-lock text-primary"></i></span>
+                      <input type="password" class="form-control border-start-0 border-end-0 bg-white" id="uPass" placeholder="Ketik password..." required>
+                      <button class="btn btn-white border border-start-0 text-muted bg-white" type="button" onclick="togglePassword()">
                           <i class="fas fa-eye" id="eyeIcon"></i>
                       </button>
                   </div>
               </div>
-              <button type="submit" id="btnLogin" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm hover-scale text-uppercase" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color));">Login Sistem</button>
+              <button type="submit" id="btnLogin" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-lg hover-scale text-uppercase" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); border: none;">Login Sistem</button>
             </form>
             
-            <div class="row g-2 mt-4 pt-3 border-top">
+            <div class="row g-2 mt-4 pt-3 border-top border-secondary border-opacity-25">
                 <div class="col-6">
-                    <a id="btn-dl-win" href="#" target="_blank" class="btn btn-outline-secondary w-100 py-2 small fw-bold d-none rounded-pill" style="font-size: 11px;">
+                    <a id="btn-dl-win" href="#" target="_blank" class="btn btn-outline-secondary w-100 py-2 small fw-bold d-none rounded-pill bg-white shadow-sm" style="font-size: 11px;">
                         <i class="fab fa-windows text-info fa-lg"></i> App Windows
                     </a>
                 </div>
                 <div class="col-6">
-                    <a id="btn-dl-and" href="#" target="_blank" class="btn btn-outline-success w-100 py-2 small fw-bold d-none rounded-pill" style="font-size: 11px;">
+                    <a id="btn-dl-and" href="#" target="_blank" class="btn btn-outline-success w-100 py-2 small fw-bold d-none rounded-pill bg-white shadow-sm" style="font-size: 11px;">
                         <i class="fab fa-android text-success fa-lg"></i> App Android
                     </a>
                 </div>
@@ -325,6 +382,7 @@ input, button, select, textarea {
         </div>
       </div>
     </div>
+          
 
     <div id="main-app" class="d-none">
 
@@ -1679,13 +1737,27 @@ function loadBooks(q='') {
 function renderBooks() {
     const tb = document.getElementById('book-list-body'); tb.innerHTML = '';
     if(bookData.length === 0) { tb.innerHTML = '<tr><td colspan="6" class="text-center">Tidak ada data.</td></tr>'; document.getElementById('book-page-info').innerText = '0-0 dari 0'; return; }
+    
     bookData.forEach(r => {
         const sisa = (r[7] !== undefined && r[7] !== "") ? r[7] : r[6]; 
         const judulAman = r[1].replace(/'/g, "\\'").replace(/"/g, "&quot;");
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td class="font-monospace text-primary fw-bold">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[3] + '</td><td class="text-center text-muted">' + r[6] + '</td><td class="text-center fw-bold text-success">' + sisa + '</td><td class="text-end"><button class="btn btn-sm btn-outline-success me-1" onclick="processDownloadLabel(\'' + r[0] + '\',\'' + judulAman + '\')"><i class="fas fa-file-image"></i></button><button class="btn btn-sm text-info" onclick="printLabel(\'' + r[0] + '\',\'' + judulAman + '\')"><i class="fas fa-print"></i></button><button class="btn btn-sm text-warning" onclick="editBook(\'' + r[0] + '\')"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="delBook(\'' + r[0] + '\')"><i class="fas fa-trash"></i></button></td>';
+        
+        // Kita tambahkan div.text-clamp-2 untuk judul buku, dan .nowrap-cell untuk aksi
+        tr.innerHTML = '<td class="font-monospace text-primary fw-bold">' + r[0] + '</td>' + 
+                       '<td><div class="text-clamp-2" title="' + r[1] + '">' + r[1] + '</div></td>' + 
+                       '<td class="nowrap-cell">' + r[3] + '</td>' + 
+                       '<td class="text-center text-muted">' + r[6] + '</td>' + 
+                       '<td class="text-center fw-bold text-success">' + sisa + '</td>' + 
+                       '<td class="text-end nowrap-cell">' + 
+                           '<button class="btn btn-sm btn-outline-success me-1" onclick="processDownloadLabel(\'' + r[0] + '\',\'' + judulAman + '\')"><i class="fas fa-file-image"></i></button>' + 
+                           '<button class="btn btn-sm text-info me-1" onclick="printLabel(\'' + r[0] + '\',\'' + judulAman + '\')"><i class="fas fa-print"></i></button>' + 
+                           '<button class="btn btn-sm text-warning me-1" onclick="editBook(\'' + r[0] + '\')"><i class="fas fa-edit"></i></button>' + 
+                           '<button class="btn btn-sm text-danger" onclick="delBook(\'' + r[0] + '\')"><i class="fas fa-trash"></i></button>' + 
+                       '</td>';
         tb.appendChild(tr);
     });
+    
     const start = (bookPage-1)*rowsPerPage + 1;
     const end = Math.min(start + bookData.length - 1, bookTotal);
     document.getElementById('book-page-info').innerText = `${start}-${end} dari ${bookTotal}`;
@@ -1740,17 +1812,32 @@ function loadMembers(q='') {
 function renderMembers() {
     const tb = document.getElementById('member-list-body'); tb.innerHTML = '';
     if(memberData.length === 0) { tb.innerHTML = '<tr><td colspan="6" class="text-center">Tidak ada data.</td></tr>'; document.getElementById('member-page-info').innerText = '0-0 dari 0'; return; }
+    
     memberData.forEach(r => {
         const tgl = safeDisplayDate(r[4]);
         const hp = r[5] ? r[5] : '-';
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + hp + '</td><td>' + tgl + '</td><td class="text-end"><button class="btn btn-sm btn-outline-success me-1" onclick="processDownloadCard(\'' + r[0] + '\')"><i class="fas fa-file-image"></i></button><button class="btn btn-sm text-info" onclick="printCard(\'' + r[0] + '\')"><i class="fas fa-id-card"></i></button><button class="btn btn-sm text-warning" onclick="editMember(\'' + r[0] + '\')"><i class="fas fa-edit"></i></button><button class="btn btn-sm text-danger" onclick="delMember(\'' + r[0] + '\')"><i class="fas fa-trash"></i></button></td>';
+        
+        // Kita tambahkan div.text-clamp-2 untuk Nama, dan .nowrap-cell untuk tgl & aksi
+        tr.innerHTML = '<td class="nowrap-cell">' + r[0] + '</td>' + 
+                       '<td><div class="text-clamp-2" title="' + r[1] + '">' + r[1] + '</div></td>' + 
+                       '<td class="nowrap-cell">' + r[2] + '</td>' + 
+                       '<td class="nowrap-cell">' + hp + '</td>' + 
+                       '<td class="nowrap-cell">' + tgl + '</td>' + 
+                       '<td class="text-end nowrap-cell">' + 
+                           '<button class="btn btn-sm btn-outline-success me-1" onclick="processDownloadCard(\'' + r[0] + '\')"><i class="fas fa-file-image"></i></button>' + 
+                           '<button class="btn btn-sm text-info me-1" onclick="printCard(\'' + r[0] + '\')"><i class="fas fa-id-card"></i></button>' + 
+                           '<button class="btn btn-sm text-warning me-1" onclick="editMember(\'' + r[0] + '\')"><i class="fas fa-edit"></i></button>' + 
+                           '<button class="btn btn-sm text-danger" onclick="delMember(\'' + r[0] + '\')"><i class="fas fa-trash"></i></button>' + 
+                       '</td>';
         tb.appendChild(tr);
     });
+    
     const start = (memberPage-1)*rowsPerPage + 1;
     const end = Math.min(start + memberData.length - 1, memberTotal);
     document.getElementById('member-page-info').innerText = `${start}-${end} dari ${memberTotal}`;
 }
+
 function prevMemberPage(){ if(memberPage>1){memberPage--; loadMembers();}}
 function nextMemberPage(){ if(memberPage*rowsPerPage < memberTotal){memberPage++; loadMembers();}}
 function openMemberModal(){ document.getElementById('formAnggota').reset(); document.getElementById('mId').readOnly=false; document.getElementById('mIsEdit').value='false'; document.getElementById('mOldId').value=''; new bootstrap.Modal(document.getElementById('modalAnggota')).show(); }
