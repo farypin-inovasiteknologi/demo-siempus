@@ -251,22 +251,24 @@ input, button, select, textarea {
                   <img id="login-logo-instansi" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" style="width:70px; height:70px; object-fit:contain;" crossorigin="anonymous">
                   <img id="login-logo-sekolah" src="https://cdn-icons-png.flaticon.com/512/2232/2232688.png" style="width:80px; height:80px; object-fit:contain;" crossorigin="anonymous">
               </div>
-              <h5 class="fw-bold mb-0 text-dark text-uppercase" id="login-instansi-name">DINAS PENDIDIKAN</h5>
-              <h4 class="fw-bold text-primary mb-2 text-uppercase" id="login-school-name">NAMA SEKOLAH</h4>
-              <p class="small text-muted mb-4 px-2" id="login-alamat-text">Alamat sekolah akan tampil di sini...</p>
+              <h5 class="fw-bold mb-0 text-dark text-uppercase" id="login-instansi-name">INSTANSI......</h5>
+              <h4 class="fw-bold text-primary mb-2 text-uppercase" id="login-school-name">NAMA SEKOLAH.....</h4>
+              <p class="small text-muted mb-4 px-2" id="login-alamat-text">Alamat sekolah...</p>
               
               <hr class="w-50 mx-auto border-secondary opacity-25">
               
               <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s80/Logo%20SiE-MPus%20baru%20ok.png" style="width:45px; margin-bottom:5px;">
-              <h5 class="fw-bold text-secondary mb-1">SiE-MPuS</h5>
-              <div class="marquee-container small fw-bold text-primary mb-3">
-                <div id="login-running-text" class="marquee-content">Sistem E-Manajemen Perpustakaan Sekolah Terpadu.</div>
-              </div>
+              <h4 class="fw-bold text-secondary mb-1">Sistem E-Manajemen Perpustakaan Sekolah</h4> <br>
+              <h4 class="fw-bold text-secondary mb-1">Sistem E-Manajemen Perpustakaan Sekolah</h4>
             </div>
             
             <button class="btn btn-primary rounded-pill fw-bold shadow-lg d-md-none mb-4 py-3 text-uppercase" onclick="switchLoginPanel('right')" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); letter-spacing: 1px;">
               Masuk Aplikasi <i class="fas fa-arrow-right ms-2"></i>
             </button>
+
+               <div class="marquee-container small fw-bold text-primary mb-3">
+                <div id="login-running-text" class="marquee-content">Sistem E-Manajemen Perpustakaan Sekolah Terpadu.</div>
+              </div>
 
             <footer class="small text-muted mt-auto">
               <span id="login-footer-text" class="d-block fw-bold mb-1">© 2026 SiE-MPuS</span>
@@ -1863,61 +1865,43 @@ function prevRiwayatPage(){ if(historyPage>1){historyPage--; loadHistory();}}
 function nextRiwayatPage(){ if(historyPage*rowsPerPage < historyTotal){historyPage++; loadHistory();}}
 
 function loadSettingsForm() {
-    const inputs = document.querySelectorAll('#formConfig input, #formConfig textarea');
+    // Ambil semua kolom input form
+    const inputs = document.querySelectorAll('#formConfig input, #formConfig textarea, #formUser input');
+    
+    // KUNCI FORM SEMENTARA SAAT LOADING
     inputs.forEach(i => { i.disabled = true; i.style.opacity = '0.5'; });
+    
     google.script.run
-        .withFailureHandler(err => console.log(err))
+        .withFailureHandler(err => {
+            console.log(err);
+            inputs.forEach(i => { i.disabled = false; i.style.opacity = '1'; });
+        })
         .withSuccessHandler(cfg => {
-            document.getElementById('cfgNama').value = cfg.NamaSekolah || '';
-            document.getElementById('cfgLogo').value = cfg.UrlLogo || '';
-            document.getElementById('cfgBg').value = cfg.UrlBackground || ''; 
-            document.getElementById('cfgRun').value = cfg.RunningText || '';
-            document.getElementById('cfgInstansi').value = cfg.NamaInstansi || '';
-            document.getElementById('cfgAlamat').value = cfg.AlamatSekolah || '';
-            document.getElementById('cfgLogoInstansi').value = cfg.UrlLogoInstansi || '';
-            // (cfgFoot Dihapus, diganti url Android & Windows)
-            document.getElementById('cfgUrlWin').value = cfg.UrlWindows || '';
-            document.getElementById('cfgUrlAnd').value = cfg.UrlAndroid || '';
+            // PAKAI TRY-CATCH: LINDUNGI DARI ERROR AGAR KUNCI PASTI TERBUKA
+            try {
+                if(document.getElementById('cfgNama')) document.getElementById('cfgNama').value = cfg.NamaSekolah || '';
+                if(document.getElementById('cfgInstansi')) document.getElementById('cfgInstansi').value = cfg.NamaInstansi || '';
+                if(document.getElementById('cfgAlamat')) document.getElementById('cfgAlamat').value = cfg.AlamatSekolah || '';
+                if(document.getElementById('cfgLogo')) document.getElementById('cfgLogo').value = cfg.UrlLogo || '';
+                if(document.getElementById('cfgLogoInstansi')) document.getElementById('cfgLogoInstansi').value = cfg.UrlLogoInstansi || '';
+                if(document.getElementById('cfgBg')) document.getElementById('cfgBg').value = cfg.UrlBackground || ''; 
+                if(document.getElementById('cfgRun')) document.getElementById('cfgRun').value = cfg.RunningText || '';
+                if(document.getElementById('cfgUrlWin')) document.getElementById('cfgUrlWin').value = cfg.UrlWindows || '';
+                if(document.getElementById('cfgUrlAnd')) document.getElementById('cfgUrlAnd').value = cfg.UrlAndroid || '';
+                if(document.getElementById('cfgDenda')) document.getElementById('cfgDenda').value = cfg.DendaPerHari || 500;
+                if(document.getElementById('cfgDurasi')) document.getElementById('cfgDurasi').value = cfg.DurasiPinjam || 7;
+                if(document.getElementById('cfgHp')) document.getElementById('cfgHp').value = cfg.NoHP || '';
+                if(document.getElementById('cfgWeb')) document.getElementById('cfgWeb').value = cfg.WebSekolah || '';
+                if(document.getElementById('cfgEmail')) document.getElementById('cfgEmail').value = cfg.EmailSekolah || '';
+                if(document.getElementById('cfgFolder')) document.getElementById('cfgFolder').value = cfg.IDFolderGambar || '';
+                if(document.getElementById('accUser')) document.getElementById('accUser').value = currentUsername;
+            } catch(e) {
+                console.log("Abaikan jika ada elemen yang tidak ditemukan: " + e);
+            }
             
-            document.getElementById('cfgDenda').value = cfg.DendaPerHari || 500;
-            document.getElementById('cfgDurasi').value = cfg.DurasiPinjam || 7;
-            document.getElementById('cfgHp').value = cfg.NoHP || '';
-            document.getElementById('cfgWeb').value = cfg.WebSekolah || '';
-            document.getElementById('cfgEmail').value = cfg.EmailSekolah || '';
-            document.getElementById('cfgFolder').value = cfg.IDFolderGambar || '';
-            document.getElementById('accUser').value = currentUsername;
+            // BUKA KEMBALI KUNCI FORM (DIJAMIN JALAN)
             inputs.forEach(i => { i.disabled = false; i.style.opacity = '1'; });
     }).getAppConfig();
-}
-
-function saveSettings() {
-    const data = {
-        namaSekolah: document.getElementById('cfgNama').value, 
-        namaInstansi: document.getElementById('cfgInstansi').value, 
-        alamatSekolah: document.getElementById('cfgAlamat').value, 
-        urlLogo: document.getElementById('cfgLogo').value, 
-        urlLogoInstansi: document.getElementById('cfgLogoInstansi').value, 
-        urlBg: document.getElementById('cfgBg').value, 
-        uploadLogo: uploadLogoBase64, 
-        uploadLogoInstansi: uploadLogoInstansiBase64, 
-        uploadBg: uploadBgBase64, 
-        runningText: document.getElementById('cfgRun').value, 
-        urlWin: document.getElementById('cfgUrlWin').value, 
-        urlAnd: document.getElementById('cfgUrlAnd').value, 
-        denda: document.getElementById('cfgDenda').value, 
-        durasi: document.getElementById('cfgDurasi').value, 
-        nohp: document.getElementById('cfgHp').value, 
-        website: document.getElementById('cfgWeb').value, 
-        email: document.getElementById('cfgEmail').value, 
-        idFolder: document.getElementById('cfgFolder').value
-    };
-    let desc = 'Sedang memperbarui aturan dan identitas...'; 
-    if(uploadBgBase64 || uploadLogoBase64 || uploadLogoInstansiBase64) desc = 'Sedang mengunggah file foto ke Google Drive...';
-    showSmartLoading('Menyimpan Pengaturan...', desc);
-    google.script.run.withFailureHandler(handleNetworkError).withSuccessHandler(res => { 
-        if(res.status) { Swal.fire({title: 'Berhasil', text: 'Pengaturan tersimpan.', icon: 'success'}).then(() => { uploadBgBase64 = null; uploadLogoBase64 = null; uploadLogoInstansiBase64 = null; loadAppConfig(); }); } 
-        else Swal.fire('Gagal', res.message, 'error'); 
-    }).saveAppConfig(data);
 }
 
 function updateAccount() {
