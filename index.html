@@ -258,8 +258,8 @@ input, button, select, textarea {
               <hr class="w-50 mx-auto border-secondary opacity-25">
               
               <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgKQaKy8lB3IXcmsdcPpZUorKzNCnUUlT8mEBvkDgnozpJRpbHdld-uSH0fWWOActJnaHg078VQ3GG5vwtr2ydeDh_3O_r5gnEOpcKmVE4-tiz9Blkb4mjVcToRFGJaODrYq_t4V0-8xB_lppMvuIko0OY0bXPrSK7fbMI_vLVGyBbvgUIRD4lI5P4ucoWw/s80/Logo%20SiE-MPus%20baru%20ok.png" style="width:45px; margin-bottom:5px;">
-              <h4 class="fw-bold text-secondary mb-1">Sistem E-Manajemen Perpustakaan Sekolah</h4> <br>
-              <h4 class="fw-bold text-secondary mb-1">Sistem E-Manajemen Perpustakaan Sekolah</h4>
+              <h5 class="text-secondary mb-1">Sistem E-Manajemen Perpustakaan Sekolah</h5> <br>
+              <h6 class="text-secondary mb-1">Dilengkapi Fitur AI</h6>
             </div>
             
             <button class="btn btn-primary rounded-pill fw-bold shadow-lg d-md-none mb-4 py-3 text-uppercase" onclick="switchLoginPanel('right')" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); letter-spacing: 1px;">
@@ -267,12 +267,12 @@ input, button, select, textarea {
             </button>
 
                <div class="marquee-container small fw-bold text-primary mb-3">
-                <div id="login-running-text" class="marquee-content">Sistem E-Manajemen Perpustakaan Sekolah Terpadu.</div>
+                <div id="login-running-text" class="marquee-content">Sistem E-Manajemen Perpustakaan Sekolah.</div>
               </div>
 
             <footer class="small text-muted mt-auto">
               <span id="login-footer-text" class="d-block fw-bold mb-1">© 2026 SiE-MPuS</span>
-              Powered by <a href='https://www.farypin-inovasiteknologi.com' class="fw-bold text-decoration-none" style='color: var(--primary-color);'>PT Farypin Inovasi</a>
+              Powered by <a href='https://www.farypin-inovasiteknologi.com' class="fw-bold text-decoration-none" style='color: var(--primary-color);'>PT Farypin Inovasi Teknologi</a>
             </footer>
           </div>
 
@@ -1925,6 +1925,56 @@ function loadSettingsForm() {
     }).getAppConfig();
 }
 
+function saveSettings() {
+    // 1. Amankan variabel gambar (kalau variabelnya lupa dipasang, anggap saja null biar gak crash)
+    const logoInstansiVal = typeof uploadLogoInstansiBase64 !== 'undefined' ? uploadLogoInstansiBase64 : null;
+    const logoVal = typeof uploadLogoBase64 !== 'undefined' ? uploadLogoBase64 : null;
+    const bgVal = typeof uploadBgBase64 !== 'undefined' ? uploadBgBase64 : null;
+
+    // 2. Tarik data dari form dengan aman (pakai tanda '?' supaya kalau ada kolom yang terhapus, webnya gak error)
+    const data = {
+        namaSekolah: document.getElementById('cfgNama')?.value || '', 
+        namaInstansi: document.getElementById('cfgInstansi')?.value || '', 
+        alamatSekolah: document.getElementById('cfgAlamat')?.value || '', 
+        urlLogo: document.getElementById('cfgLogo')?.value || '', 
+        urlLogoInstansi: document.getElementById('cfgLogoInstansi')?.value || '', 
+        urlBg: document.getElementById('cfgBg')?.value || '', 
+        uploadLogo: logoVal, 
+        uploadLogoInstansi: logoInstansiVal, 
+        uploadBg: bgVal, 
+        runningText: document.getElementById('cfgRun')?.value || '', 
+        urlWin: document.getElementById('cfgUrlWin')?.value || '', 
+        urlAnd: document.getElementById('cfgUrlAnd')?.value || '', 
+        denda: document.getElementById('cfgDenda')?.value || 0, 
+        durasi: document.getElementById('cfgDurasi')?.value || 0, 
+        nohp: document.getElementById('cfgHp')?.value || '', 
+        website: document.getElementById('cfgWeb')?.value || '', 
+        email: document.getElementById('cfgEmail')?.value || '', 
+        idFolder: document.getElementById('cfgFolder')?.value || ''
+    };
+    
+    let desc = 'Sedang memperbarui aturan dan identitas...'; 
+    if(bgVal || logoVal || logoInstansiVal) desc = 'Sedang mengunggah file foto ke Google Drive...';
+    
+    showSmartLoading('Menyimpan Pengaturan...', desc);
+    
+    google.script.run
+        .withFailureHandler(handleNetworkError)
+        .withSuccessHandler(res => { 
+            if(res.status) { 
+                Swal.fire({title: 'Berhasil', text: 'Pengaturan tersimpan.', icon: 'success'}).then(() => { 
+                    // Kosongkan memori gambar setelah sukses simpan
+                    if(typeof uploadBgBase64 !== 'undefined') uploadBgBase64 = null; 
+                    if(typeof uploadLogoBase64 !== 'undefined') uploadLogoBase64 = null; 
+                    if(typeof uploadLogoInstansiBase64 !== 'undefined') uploadLogoInstansiBase64 = null; 
+                    loadAppConfig(); 
+                }); 
+            } else {
+                Swal.fire('Gagal', res.message, 'error'); 
+            }
+        }).saveAppConfig(data);
+}
+
 function updateAccount() {
     const newUser = document.getElementById('accUser').value; const newPass = document.getElementById('accPass').value;
     if(!newUser || !newPass) { Swal.fire('Error', 'Wajib diisi', 'warning'); return; }
@@ -2129,55 +2179,7 @@ loadAppConfig = function() {
     }).getAppConfig();
 };
 
-function saveSettings() {
-    // 1. Amankan variabel gambar (kalau variabelnya lupa dipasang, anggap saja null biar gak crash)
-    const logoInstansiVal = typeof uploadLogoInstansiBase64 !== 'undefined' ? uploadLogoInstansiBase64 : null;
-    const logoVal = typeof uploadLogoBase64 !== 'undefined' ? uploadLogoBase64 : null;
-    const bgVal = typeof uploadBgBase64 !== 'undefined' ? uploadBgBase64 : null;
 
-    // 2. Tarik data dari form dengan aman (pakai tanda '?' supaya kalau ada kolom yang terhapus, webnya gak error)
-    const data = {
-        namaSekolah: document.getElementById('cfgNama')?.value || '', 
-        namaInstansi: document.getElementById('cfgInstansi')?.value || '', 
-        alamatSekolah: document.getElementById('cfgAlamat')?.value || '', 
-        urlLogo: document.getElementById('cfgLogo')?.value || '', 
-        urlLogoInstansi: document.getElementById('cfgLogoInstansi')?.value || '', 
-        urlBg: document.getElementById('cfgBg')?.value || '', 
-        uploadLogo: logoVal, 
-        uploadLogoInstansi: logoInstansiVal, 
-        uploadBg: bgVal, 
-        runningText: document.getElementById('cfgRun')?.value || '', 
-        urlWin: document.getElementById('cfgUrlWin')?.value || '', 
-        urlAnd: document.getElementById('cfgUrlAnd')?.value || '', 
-        denda: document.getElementById('cfgDenda')?.value || 0, 
-        durasi: document.getElementById('cfgDurasi')?.value || 0, 
-        nohp: document.getElementById('cfgHp')?.value || '', 
-        website: document.getElementById('cfgWeb')?.value || '', 
-        email: document.getElementById('cfgEmail')?.value || '', 
-        idFolder: document.getElementById('cfgFolder')?.value || ''
-    };
-    
-    let desc = 'Sedang memperbarui aturan dan identitas...'; 
-    if(bgVal || logoVal || logoInstansiVal) desc = 'Sedang mengunggah file foto ke Google Drive...';
-    
-    showSmartLoading('Menyimpan Pengaturan...', desc);
-    
-    google.script.run
-        .withFailureHandler(handleNetworkError)
-        .withSuccessHandler(res => { 
-            if(res.status) { 
-                Swal.fire({title: 'Berhasil', text: 'Pengaturan tersimpan.', icon: 'success'}).then(() => { 
-                    // Kosongkan memori gambar setelah sukses simpan
-                    if(typeof uploadBgBase64 !== 'undefined') uploadBgBase64 = null; 
-                    if(typeof uploadLogoBase64 !== 'undefined') uploadLogoBase64 = null; 
-                    if(typeof uploadLogoInstansiBase64 !== 'undefined') uploadLogoInstansiBase64 = null; 
-                    loadAppConfig(); 
-                }); 
-            } else {
-                Swal.fire('Gagal', res.message, 'error'); 
-            }
-        }).saveAppConfig(data);
-}
 
 // ==========================================================
 // 1. FITUR CETAK SEMUA BARCODE BUKU (A4 3x3 + LOGO & QR BESAR)
