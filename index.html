@@ -275,9 +275,16 @@ input, button, select, textarea {
           100% { transform: translate(50px, 50px) scale(1.2); }
       }
 
-      /* Animasi Logo Melayang (Beda durasi biar geraknya gak kaku barengan) */
-      .anim-float-1 { animation: float 3s ease-in-out infinite; }
-      .anim-float-2 { animation: float 4s ease-in-out infinite; animation-delay: 1.5s; }
+      /* Rumus Melayang Lurus Naik-Turun (Tanpa geser kiri) */
+      @keyframes float-inline {
+          0% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0); }
+      }
+
+      /* Animasi Logo Melayang (Diperbaiki agar tidak oleng) */
+      .anim-float-1 { animation: float-inline 3s ease-in-out infinite; }
+      .anim-float-2 { animation: float-inline 4s ease-in-out infinite; animation-delay: 1.5s; }
 
       /* Animasi Tombol HP Melayang & Berdenyut */
       @keyframes pulse-float {
