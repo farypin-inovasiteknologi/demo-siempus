@@ -13,7 +13,7 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
 // 1. Buat "Buku Telepon" yang berisi daftar sekolah dan link Backend-nya masing-masing
 const daftarSekolah = {
-    "sman5tebo": "https://script.google.com/macros/s/AKfycbwX0vNiVka6uOtpTrQ4OA7pBMDIj9P3FZABIcDA0brpO6urXdsunVo-wTYSOKmUkYx0/exec",
+    "sman5tebo": "https://script.google.com/......",
     "demo": "https://script.google.com/macros/s/AKfycbyCK2_zfuhnUxiJ7BGAB0m3PxF87I2bAOKpsxdYAHw67il0RWuYSmfjNABAMQUDDq-Q/exec"
 };
 
@@ -67,7 +67,7 @@ function apiHelper() {
                 body: JSON.stringify(payload)
             });
             const data = await res.json();
-            
+
             if (successCb) successCb(data);
         } catch (err) {
             if (failCb) failCb(err);
@@ -96,6 +96,7 @@ function apiHelper() {
         processExcelData: function (t, r) { execute('processExcelData', { type: t, rows: r }); },
         getExportHistoryByDate: function (s, e, a) { execute('getExportHistoryByDate', { startDate: s, endDate: e, isArchive: a }); },
         deleteHistory: function (id, isA) { execute('deleteHistory', { idTrx: id, isArchive: isA }); },
+        getAllDataForExport: function (type) { execute('getAllDataForExport', { type: type }); },
         callGeminiAI: function (p) { execute('callGeminiAI', { prompt: p }); }
     };
 }
@@ -545,7 +546,7 @@ function attemptLogin() {
             // Membaca dari config_offline.js jika tersedia
             let offUser = (typeof OFFLINE_ADMIN_USER !== 'undefined') ? OFFLINE_ADMIN_USER : 'admin';
             let offPass = (typeof OFFLINE_ADMIN_PASS !== 'undefined') ? OFFLINE_ADMIN_PASS : 'admin123';
-            
+
             if (u === offUser && p === offPass) {
                 prosesSuksesLogin({ status: true, nama: 'Admin (Mode Offline)', username: u });
             } else {
@@ -575,7 +576,7 @@ function attemptLogin() {
 function prosesSuksesLogin(res) {
     const btn = document.getElementById('btnLogin');
     btn.innerHTML = 'Login Sistem'; btn.disabled = false;
-    
+
     // Pastikan nama tidak kosong, jika kosong gunakan username
     currentUser = (res.nama && res.nama.trim() !== "") ? res.nama : res.username;
     currentUsername = res.username;
@@ -1383,7 +1384,7 @@ loadAppConfig = function () {
 function printAllLabels() {
     showSmartLoading('Menyiapkan Barcode...', 'Mengambil semua data buku dan menyusun layout kertas A4.');
 
-    google.script.run
+    apiHelper()
         .withFailureHandler(handleNetworkError)
         .withSuccessHandler(allBooks => {
             if (allBooks.length === 0) { Swal.fire('Kosong', 'Belum ada data buku untuk dicetak.', 'info'); return; }
@@ -1481,7 +1482,7 @@ function printAllLabels() {
 function printAllCards() {
     showSmartLoading('Menyiapkan Kartu...', 'Mengambil data anggota dan menyusun layout kertas A4.');
 
-    google.script.run
+    apiHelper()
         .withFailureHandler(handleNetworkError)
         .withSuccessHandler(allMembers => {
             if (allMembers.length === 0) { Swal.fire('Kosong', 'Belum ada data anggota.', 'info'); return; }
