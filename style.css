@@ -427,11 +427,16 @@ body {
 
 /* --- EFEK GLASSMORPHISM & ANIMASI MELAYANG --- */
 .glass-morphism-card {
-    background: rgba(255, 255, 255, 0.55) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
     /* Dibuat lebih transparan biar efek kacanya terasa */
-    backdrop-filter: blur(25px) saturate(150%) !important;
-    -webkit-backdrop-filter: blur(25px) saturate(150%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(15px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(120%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+#login-instansi-name, #login-school-name, #login-alamat-text, 
+#loginForm label, #loginForm h4, #loginForm p {
+    text-shadow: 0px 1px 3px rgba(255,255,255, 0.9), 0px 0px 5px rgba(255,255,255, 0.7);
 }
 
 /* Bola Cahaya Warna-warni di Belakang Kaca */
