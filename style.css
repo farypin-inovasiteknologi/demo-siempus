@@ -134,6 +134,36 @@ body {
     box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
 }
 
+/* ====  Style khusus untuk Tab di halaman Pengaturan  ==== */
+#settingTabs .nav-link,
+#settingTabsOnline .nav-link {
+    display: inline-flex;
+    margin: 0;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    color: #666;
+    background: transparent;
+    box-shadow: none;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+#settingTabs .nav-link:hover,
+#settingTabsOnline .nav-link:hover {
+    background: #f0f4ff;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+#settingTabs .nav-link.active,
+#settingTabsOnline .nav-link.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 3px 10px rgba(67, 97, 238, 0.25);
+}
+
 .glass-card {
     background: white;
     border-radius: 16px;
