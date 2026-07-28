@@ -373,142 +373,183 @@
                 </div>
 
                 <div id="page-pengaturan" class="page-section d-none">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <div class="glass-card p-4">
-                                <h5 class="fw-bold text-primary mb-3"><i class="fas fa-sliders-h me-2"></i>Aturan &
-                                    Identitas</h5>
-                                <form id="formConfig">
-                                    <div class="row mb-2">
-                                        <div class="col-md-6"><label for="cfgInstansi" class="small fw-bold">Nama
-                                                Instansi</label><input type="text" id="cfgInstansi" class="form-control"
-                                                placeholder="PEMERINTAH PROVINSI...."></div>
-                                        <div class="col-md-6"><label for="cfgNama" class="small fw-bold">Nama
-                                                Sekolah</label><input type="text" id="cfgNama" class="form-control"
-                                                placeholder="SMAN 1..."></div>
-                                    </div>
+                    <ul class="nav nav-pills mb-3" id="settingTabsOnline" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold" id="sistem-tab-online" data-bs-toggle="pill"
+                                data-bs-target="#sistem-online" type="button" role="tab">Setting Sistem</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold" id="backup-tab-online" data-bs-toggle="pill"
+                                data-bs-target="#backup-online" type="button" role="tab">Backup & Restore</button>
+                        </li>
+                    </ul>
 
-                                    <div class="mb-3"><label for="cfgAlamat" class="small fw-bold">Alamat Lengkap
-                                            Sekolah</label><textarea id="cfgAlamat" class="form-control" rows="2"
-                                            placeholder="Jln. Raya Pendidikan No..."></textarea></div>
-
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <div class="bg-light p-2 rounded border h-100">
-                                                <label class="small fw-bold text-primary">Upload Logo Instansi
-                                                    (1:1)</label>
-                                                <input type="file" id="fileLogoInstansi"
-                                                    class="form-control form-control-sm mb-2" accept="image/*">
-                                                <input type="hidden" id="cfgLogoInstansi"> <img id="previewLogoInstansi"
-                                                    src="" class="rounded" style="max-height: 50px; display:none;">
+                    <div class="tab-content" id="settingTabsContentOnline">
+                        <!-- TAB SETTING SISTEM -->
+                        <div class="tab-pane fade show active" id="sistem-online" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="glass-card p-4">
+                                        <h5 class="fw-bold text-primary mb-3"><i class="fas fa-sliders-h me-2"></i>Aturan &
+                                            Identitas</h5>
+                                        <form id="formConfig">
+                                            <div class="row mb-2">
+                                                <div class="col-md-6"><label for="cfgInstansi" class="small fw-bold">Nama
+                                                        Instansi</label><input type="text" id="cfgInstansi" class="form-control"
+                                                        placeholder="PEMERINTAH PROVINSI...."></div>
+                                                <div class="col-md-6"><label for="cfgNama" class="small fw-bold">Nama
+                                                        Sekolah</label><input type="text" id="cfgNama" class="form-control"
+                                                        placeholder="SMAN 1..."></div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6 mt-2 mt-md-0">
-                                            <div class="bg-light p-2 rounded border h-100">
-                                                <label class="small fw-bold text-primary">Upload Logo Sekolah
-                                                    (1:1)</label>
-                                                <input type="file" id="fileLogo"
-                                                    class="form-control form-control-sm mb-2" accept="image/*">
-                                                <input type="hidden" id="cfgLogo"> <img id="previewLogo" src=""
-                                                    class="rounded" style="max-height: 50px; display:none;">
+
+                                            <div class="mb-3"><label for="cfgAlamat" class="small fw-bold">Alamat Lengkap
+                                                    Sekolah</label><textarea id="cfgAlamat" class="form-control" rows="2"
+                                                    placeholder="Jln. Raya Pendidikan No..."></textarea></div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="bg-light p-2 rounded border h-100">
+                                                        <label class="small fw-bold text-primary">Upload Logo Instansi
+                                                            (1:1)</label>
+                                                        <input type="file" id="fileLogoInstansi"
+                                                            class="form-control form-control-sm mb-2" accept="image/*">
+                                                        <input type="hidden" id="cfgLogoInstansi"> <img id="previewLogoInstansi"
+                                                            src="" class="rounded" style="max-height: 50px; display:none;">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mt-2 mt-md-0">
+                                                    <div class="bg-light p-2 rounded border h-100">
+                                                        <label class="small fw-bold text-primary">Upload Logo Sekolah
+                                                            (1:1)</label>
+                                                        <input type="file" id="fileLogo"
+                                                            class="form-control form-control-sm mb-2" accept="image/*">
+                                                        <input type="hidden" id="cfgLogo"> <img id="previewLogo" src=""
+                                                            class="rounded" style="max-height: 50px; display:none;">
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
 
-                                    <div class="mb-3 bg-light p-2 rounded border">
-                                        <label class="small fw-bold text-primary">Upload Background Login (5:3)</label>
-                                        <input type="file" id="fileBg" class="form-control form-control-sm"
-                                            accept="image/*">
-                                        <input type="hidden" id="cfgBg"> <img id="previewBg" src=""
-                                            class="mt-2 rounded w-100"
-                                            style="max-height: 80px; object-fit: cover; display:none;">
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-6 mb-2"><label for="cfgHp" class="small fw-bold">No.
-                                                HP/WA</label><input type="text" id="cfgHp" class="form-control"></div>
-                                        <div class="col-6 mb-2"><label for="cfgWeb"
-                                                class="small fw-bold">Website</label><input type="text" id="cfgWeb"
-                                                class="form-control"></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6 mb-2"><label for="cfgEmail"
-                                                class="small fw-bold">Email</label><input type="text" id="cfgEmail"
-                                                class="form-control"></div>
-                                        <div class="col-6 mb-2"><label for="cfgFolder" class="small fw-bold">ID Folder
-                                                Drive</label><input type="text" id="cfgFolder" class="form-control"
-                                                placeholder="Kosongkan jika auto"></div>
-                                    </div>
-
-                                    <div class="mb-2"><label for="cfgRun" class="small fw-bold">Running
-                                            Text</label><textarea id="cfgRun" class="form-control" rows="2"></textarea>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-6 mb-2"><label for="cfgUrlWin"
-                                                class="small fw-bold text-info"><i class="fab fa-windows"></i> Link App
-                                                Windows</label><input type="text" id="cfgUrlWin" class="form-control"
-                                                placeholder="https://..."></div>
-                                        <div class="col-6 mb-2"><label for="cfgUrlAnd"
-                                                class="small fw-bold text-success"><i class="fab fa-android"></i> Link
-                                                App Android</label><input type="text" id="cfgUrlAnd"
-                                                class="form-control" placeholder="https://..."></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6"><label for="cfgDenda" class="small fw-bold">Denda
-                                                (Rp)</label><input type="number" id="cfgDenda" class="form-control">
-                                        </div>
-                                        <div class="col-6"><label for="cfgDurasi" class="small fw-bold">Durasi
-                                                (Hari)</label><input type="number" id="cfgDurasi" class="form-control">
-                                        </div>
-                                    </div>
-                                    <button type="button"
-                                        class="btn btn-primary w-100 mt-4 py-2 fw-bold rounded-pill shadow-sm"
-                                        onclick="saveSettings()">SIMPAN PENGATURAN</button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <!-- Akun Admin: Compact & Editable di versi Online -->
-                        <div class="col-12">
-                            <div class="glass-card p-3">
-                                <div class="d-flex align-items-center mb-2 gap-2">
-                                    <i class="fas fa-user-lock text-danger"></i>
-                                    <h6 class="fw-bold text-danger mb-0">Akun Admin</h6>
-                                    <span class="badge bg-warning text-dark ms-auto"><i
-                                            class="fas fa-edit me-1"></i>Bisa Diubah</span>
-                                </div>
-                                <div class="alert alert-warning small py-2 mb-2"><i
-                                        class="fas fa-exclamation-triangle me-1"></i>
-                                    Ganti akun akan otomatis logout. Pastikan Anda mengingat kredensial baru.
-                                </div>
-                                <form id="formUser">
-                                    <div class="row g-2 align-items-end">
-                                        <div class="col-md-5">
-                                            <label for="accUser" class="small fw-bold">Username Baru</label>
-                                            <input type="text" id="accUser" class="form-control form-control-sm">
-                                        </div>
-                                        <div class="col-md-5">
-                                            <label for="accPass" class="small fw-bold">Password Baru</label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="password" id="accPass" class="form-control">
-                                                <button class="btn btn-outline-secondary" type="button"
-                                                    onclick="toggleAdminPassword()" title="Lihat Password">
-                                                    <i class="fas fa-eye" id="eyeIconAdmin"></i>
-                                                </button>
+                                            <div class="mb-3 bg-light p-2 rounded border">
+                                                <label class="small fw-bold text-primary">Upload Background Login (5:3)</label>
+                                                <input type="file" id="fileBg" class="form-control form-control-sm"
+                                                    accept="image/*">
+                                                <input type="hidden" id="cfgBg"> <img id="previewBg" src=""
+                                                    class="mt-2 rounded w-100"
+                                                    style="max-height: 80px; object-fit: cover; display:none;">
                                             </div>
-                                        </div>
-                                        <div class="col-md-2">
+
+                                            <div class="row">
+                                                <div class="col-6 mb-2"><label for="cfgHp" class="small fw-bold">No.
+                                                        HP/WA</label><input type="text" id="cfgHp" class="form-control"></div>
+                                                <div class="col-6 mb-2"><label for="cfgWeb"
+                                                        class="small fw-bold">Website</label><input type="text" id="cfgWeb"
+                                                        class="form-control"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6 mb-2"><label for="cfgEmail"
+                                                        class="small fw-bold">Email</label><input type="text" id="cfgEmail"
+                                                        class="form-control"></div>
+                                                <div class="col-6 mb-2"><label for="cfgFolder" class="small fw-bold">ID Folder
+                                                        Drive</label><input type="text" id="cfgFolder" class="form-control"
+                                                        placeholder="Kosongkan jika auto"></div>
+                                            </div>
+
+                                            <div class="mb-2"><label for="cfgRun" class="small fw-bold">Running
+                                                    Text</label><textarea id="cfgRun" class="form-control" rows="2"></textarea>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-6"><label for="cfgDenda" class="small fw-bold">Denda
+                                                        (Rp)</label><input type="number" id="cfgDenda" class="form-control">
+                                                </div>
+                                                <div class="col-6"><label for="cfgDurasi" class="small fw-bold">Durasi
+                                                        (Hari)</label><input type="number" id="cfgDurasi" class="form-control">
+                                                </div>
+                                            </div>
                                             <button type="button"
-                                                class="btn btn-danger w-100 btn-sm fw-bold rounded-pill"
-                                                onclick="updateAccount()"><i
-                                                    class="fas fa-save me-1"></i>Update</button>
-                                        </div>
+                                                class="btn btn-primary w-100 mt-4 py-2 fw-bold rounded-pill shadow-sm"
+                                                onclick="saveSettings()">SIMPAN PENGATURAN</button>
+                                        </form>
                                     </div>
-                                </form>
+                                </div>
+
+                                <!-- Akun Admin: Compact & Editable di versi Online -->
+                                <div class="col-12">
+                                    <div class="glass-card p-3">
+                                        <div class="d-flex align-items-center mb-2 gap-2">
+                                            <i class="fas fa-user-lock text-danger"></i>
+                                            <h6 class="fw-bold text-danger mb-0">Akun Admin</h6>
+                                            <span class="badge bg-warning text-dark ms-auto"><i
+                                                    class="fas fa-edit me-1"></i>Bisa Diubah</span>
+                                        </div>
+                                        <div class="alert alert-warning small py-2 mb-2"><i
+                                                class="fas fa-exclamation-triangle me-1"></i>
+                                            Ganti akun akan otomatis logout. Pastikan Anda mengingat kredensial baru.
+                                        </div>
+                                        <form id="formUser">
+                                            <div class="row g-2 align-items-end">
+                                                <div class="col-md-5">
+                                                    <label for="accUser" class="small fw-bold">Username Baru</label>
+                                                    <input type="text" id="accUser" class="form-control form-control-sm">
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <label for="accPass" class="small fw-bold">Password Baru</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="password" id="accPass" class="form-control">
+                                                        <button class="btn btn-outline-secondary" type="button"
+                                                            onclick="toggleAdminPassword()" title="Lihat Password">
+                                                            <i class="fas fa-eye" id="eyeIconAdmin"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button"
+                                                        class="btn btn-danger w-100 btn-sm fw-bold rounded-pill"
+                                                        onclick="updateAccount()"><i
+                                                            class="fas fa-save me-1"></i>Update</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
+                        <!-- TAB BACKUP & RESTORE -->
+                        <div class="tab-pane fade" id="backup-online" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="glass-card p-4 text-center">
+                                        <h5 class="fw-bold text-info mb-3"><i class="fas fa-database me-2"></i>Backup & Restore (Online)</h5>
+                                        <p class="text-muted small mb-4">Gunakan fitur ini untuk mencadangkan seluruh data Anda secara lokal (format JSON) sebagai keamanan, atau memulihkannya ke server.</p>
+                                        
+                                        <div class="row g-3 justify-content-center">
+                                            <div class="col-md-5">
+                                                <div class="border rounded p-4 bg-light h-100">
+                                                    <i class="fas fa-download fa-3x text-primary mb-3"></i>
+                                                    <h6 class="fw-bold">Backup Data (JSON)</h6>
+                                                    <p class="small text-muted">Unduh semua data (Buku, Anggota, Riwayat, dll) dari server ke komputer Anda.</p>
+                                                    <button class="btn btn-primary w-100 rounded-pill fw-bold" onclick="backupDataJSON()">
+                                                        <i class="fas fa-save me-1"></i> Mulai Backup
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <div class="border rounded p-4 bg-light h-100">
+                                                    <i class="fas fa-upload fa-3x text-success mb-3"></i>
+                                                    <h6 class="fw-bold">Restore Data (JSON)</h6>
+                                                    <p class="small text-muted">Pulihkan data dari file backup JSON yang pernah Anda unduh ke server.</p>
+                                                    <input type="file" id="fileRestoreJSON" accept=".json" style="display:none" onchange="restoreDataJSON(this)">
+                                                    <button class="btn btn-success w-100 rounded-pill fw-bold" onclick="document.getElementById('fileRestoreJSON').click()">
+                                                        <i class="fas fa-folder-open me-1"></i> Pilih File Restore
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
