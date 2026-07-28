@@ -14,7 +14,7 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 // 1. Buat "Buku Telepon" yang berisi daftar sekolah dan link Backend-nya masing-masing
 const daftarSekolah = {
     "sman5tebo": "https://script.google.com/......",
-    "demo": "https://script.google.com/macros/s/AKfycbyCK2_zfuhnUxiJ7BGAB0m3PxF87I2bAOKpsxdYAHw67il0RWuYSmfjNABAMQUDDq-Q/exec"
+    "demo": "https://script.google.com/macros/s/AKfycbzwf-sCZUQeY__rMUXQuV6fbm6XeQFgnqDkvFCHtLQa8UbB0A9yqFuj8h5IuBIi0B-S/exec"
 };
 
 // 2. Baca parameter ?id= dari URL browser
@@ -2050,4 +2050,85 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+// ==========================================================
+// FITUR BACKUP & RESTORE ONLINE
+// ==========================================================
+async function backupDataJSON() {
+    try {
+        Swal.fire({ title: 'Menyiapkan Backup Online...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        
+        google.script.run
+            .withSuccessHandler(function(response) {
+                if(response.status) {
+                    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(response.data));
+                    const downloadAnchorNode = document.createElement('a');
+                    downloadAnchorNode.setAttribute('href', dataStr);
+                    downloadAnchorNode.setAttribute('download', 'backup_siempus_online_' + new Date().getTime() + '.json');
+                    document.body.appendChild(downloadAnchorNode);
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                    Swal.fire('Berhasil!', 'Data online berhasil dibackup.', 'success');
+                } else {
+                    Swal.fire('Gagal!', 'Terjadi kesalahan: ' + response.message, 'error');
+                }
+            })
+            .withFailureHandler(function(error) {
+                console.error(error);
+                Swal.fire('Error!', 'Gagal menghubungi server.', 'error');
+            })
+            .getAllBackupData();
+            
+    } catch(e) {
+        console.error('Backup gagal', e);
+        Swal.fire('Gagal!', 'Terjadi kesalahan saat backup: ' + e.message, 'error');
+    }
+}
+
+async function restoreDataJSON(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        try {
+            const backupData = JSON.parse(e.target.result);
+            if (typeof backupData !== 'object') {
+                Swal.fire('Gagal!', 'Format file JSON tidak valid!', 'error');
+                return;
+            }
+            Swal.fire({
+                title: 'Konfirmasi Restore',
+                text: 'Semua data ONLINE akan ditimpa dengan data dari file backup. Proses ini mungkin memakan waktu lama. Anda yakin?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Restore!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Merestore Data Online...', text: 'Mohon tunggu, ini bisa memakan waktu beberapa menit...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+                    
+                    google.script.run
+                        .withSuccessHandler(function(response) {
+                            if(response.status) {
+                                Swal.fire('Berhasil!', 'Data online berhasil direstore. Halaman akan dimuat ulang.', 'success').then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('Gagal!', 'Terjadi kesalahan: ' + response.message, 'error');
+                            }
+                        })
+                        .withFailureHandler(function(error) {
+                            console.error(error);
+                            Swal.fire('Error!', 'Gagal menghubungi server saat restore.', 'error');
+                        })
+                        .restoreBackupData(backupData);
+                }
+            });
+        } catch (err) {
+            console.error('Restore gagal', err);
+            Swal.fire('Gagal!', 'Gagal membaca atau memproses file backup: ' + err.message, 'error');
+        }
+    };
+    reader.readAsText(file);
+    input.value = ''; // Reset input
+}
 
