@@ -623,10 +623,10 @@ document.getElementById('nav-logout').addEventListener('click', () => {
     });
 });
 
-document.querySelectorAll('.nav-link').forEach(link => {
+document.querySelectorAll('#sidebar .nav-link').forEach(link => {
     link.addEventListener('click', function (e) {
         e.preventDefault();
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('#sidebar .nav-link').forEach(l => l.classList.remove('active'));
         this.classList.add('active');
         document.getElementById('sidebar').classList.remove('show');
         document.getElementById('overlay').classList.remove('show');
@@ -653,8 +653,8 @@ function showPage(pageId) {
         localStorage.setItem('siempus_page', 'dashboard');
     }
 
-    // Sinkronisasi menu samping (Sidebar)
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    // Sinkronisasi menu samping (Sidebar) - hanya sidebar, bukan tab di halaman lain
+    document.querySelectorAll('#sidebar .nav-link').forEach(l => l.classList.remove('active'));
     const activeSidebar = document.getElementById('nav-' + pageId);
     if (activeSidebar) activeSidebar.classList.add('active');
 
