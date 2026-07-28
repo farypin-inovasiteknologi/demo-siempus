@@ -298,7 +298,7 @@ function openCropper(e, target, ratio) {
 document.getElementById('btnApplyCrop').addEventListener('click', function () {
     if (!cropperInstance) return;
     if (currentCropTarget === 'logo' || currentCropTarget === 'logoInstansi') {
-        const canvas = cropperInstance.getCroppedCanvas({ width: 400, height: 400 });
+        const canvas = cropperInstance.getCroppedCanvas({ width: 200, height: 200 });
         const resultBase64 = canvas.toDataURL('image/png');
         if (currentCropTarget === 'logo') {
             uploadLogoBase64 = resultBase64;
