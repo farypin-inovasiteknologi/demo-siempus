@@ -93,6 +93,8 @@ function apiHelper() {
         getHistoryList: function (p, l, q, isA) { execute('getHistoryList', { page: p, limit: l, search: q, isArchive: isA }); },
         saveAppConfig: function (d) { execute('saveAppConfig', { configData: d }); },
         updateUserCredentials: function (o, n, p) { execute('updateUserCredentials', { oldUser: o, newUser: n, newPass: p }); },
+        getAllBackupData: function () { execute('getAllBackupData'); },
+        restoreBackupData: function (data) { execute('restoreBackupData', { backupData: data }); },
         processExcelData: function (t, r) { execute('processExcelData', { type: t, rows: r }); },
         getExportHistoryByDate: function (s, e, a) { execute('getExportHistoryByDate', { startDate: s, endDate: e, isArchive: a }); },
         deleteHistory: function (id, isA) { execute('deleteHistory', { idTrx: id, isArchive: isA }); },
